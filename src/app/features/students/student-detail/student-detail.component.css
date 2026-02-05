@@ -1,0 +1,195 @@
+.detail-page {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.loading,
+.not-found {
+  text-align: center;
+  padding: 3rem;
+}
+
+.back-link {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.student-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+h1 {
+  margin: 0 0 0.25rem;
+  color: #333;
+}
+
+.student-header p {
+  margin: 0;
+  color: #666;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-edit {
+  padding: 0.5rem 1rem;
+  background: #f5f7fa;
+  color: #667eea;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.btn-delete {
+  padding: 0.5rem 1rem;
+  background: #ffebee;
+  color: #e53935;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.info-card h3 {
+  margin: 0 0 1rem;
+  color: #333;
+  font-size: 1rem;
+}
+
+dl {
+  margin: 0;
+}
+
+dt {
+  color: #666;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+dd {
+  margin: 0 0 1rem;
+  color: #333;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge.beginner {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.badge.intermediate {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.badge.advanced {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.status {
+  color: #e53935;
+}
+
+.status.active {
+  color: #388e3c;
+}
+
+.notes {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.roadmaps-section {
+  grid-column: 1 / -1;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-header h3 {
+  margin: 0;
+}
+
+.btn-small {
+  padding: 0.375rem 0.75rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.empty-roadmaps {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  background: #f5f7fa;
+  border-radius: 0.5rem;
+}

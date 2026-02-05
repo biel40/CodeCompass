@@ -1,0 +1,98 @@
+<div class="editor-page">
+  <header class="page-header">
+    <a routerLink="/roadmaps" class="back-link">← Volver</a>
+    <h1>{{ isEditMode() ? 'Editar' : 'Nuevo' }} Roadmap</h1>
+  </header>
+
+  <form [formGroup]="roadmapForm" (ngSubmit)="onSubmit()" class="roadmap-form">
+    @if (errorMessage()) {
+      <div class="error-alert" role="alert">{{ errorMessage() }}</div>
+    }
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="title">Título *</label>
+        <input id="title" type="text" formControlName="title" placeholder="Ej: Desarrollo Frontend con Angular" />
+        @if (roadmapForm.get('title')?.touched && roadmapForm.get('title')?.errors?.['required']) {
+          <span class="error-text">El título es requerido</span>
+        }
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Descripción *</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        rows="3"
+        placeholder="Describe el objetivo y contenido del roadmap..."
+      ></textarea>
+      @if (roadmapForm.get('description')?.touched && roadmapForm.get('description')?.errors?.['required']) {
+        <span class="error-text">La descripción es requerida</span>
+      }
+    </div>
+
+    <div class="form-row two-cols">
+      <div class="form-group">
+        <label for="category">Categoría</label>
+        <select id="category" formControlName="category">
+          <option value="frontend">Frontend</option>
+          <option value="backend">Backend</option>
+          <option value="fullstack">Fullstack</option>
+          <option value="devops">DevOps</option>
+          <option value="mobile">Mobile</option>
+          <option value="data-science">Data Science</option>
+          <option value="ai-ml">AI/ML</option>
+          <option value="other">Otro</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="difficulty">Dificultad</label>
+        <select id="difficulty" formControlName="difficulty">
+          <option value="beginner">Principiante</option>
+          <option value="intermediate">Intermedio</option>
+          <option value="advanced">Avanzado</option>
+          <option value="expert">Experto</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row two-cols">
+      <div class="form-group">
+        <label for="estimatedHours">Horas Estimadas</label>
+        <input id="estimatedHours" type="number" formControlName="estimatedHours" min="1" />
+      </div>
+
+      <div class="form-group">
+        <label for="tags">Tags (separados por coma)</label>
+        <input id="tags" type="text" formControlName="tags" placeholder="angular, typescript, web" />
+      </div>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label>
+        <input type="checkbox" formControlName="isPublic" />
+        Hacer público este roadmap
+      </label>
+    </div>
+
+    <div class="editor-placeholder">
+      <span class="placeholder-icon">🗺️</span>
+      <h3>Editor Visual de Nodos</h3>
+      <p>El editor visual de roadmaps estará disponible próximamente.</p>
+      <p>Podrás crear nodos, conectarlos y añadir recursos interactivamente.</p>
+    </div>
+
+    <div class="form-actions">
+      <a routerLink="/roadmaps" class="btn-cancel">Cancelar</a>
+      <button type="submit" [disabled]="roadmapForm.invalid || isLoading()" class="btn-primary">
+        @if (isLoading()) {
+          Guardando...
+        } @else {
+          {{ isEditMode() ? 'Actualizar' : 'Crear' }} Roadmap
+        }
+      </button>
+    </div>
+  </form>
+</div>

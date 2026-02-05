@@ -1,0 +1,41 @@
+<div class="roadmaps-page">
+  <header class="page-header">
+    <div>
+      <h1>Roadmaps</h1>
+      <p>Gestiona los roadmaps de programación</p>
+    </div>
+    <a routerLink="/roadmaps/new" class="btn-primary">+ Nuevo Roadmap</a>
+  </header>
+
+  @if (isLoading()) {
+    <div class="loading">Cargando roadmaps...</div>
+  } @else if (roadmaps().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">🗺️</span>
+      <h3>No hay roadmaps</h3>
+      <p>Crea tu primer roadmap para tus alumnos</p>
+      <a routerLink="/roadmaps/new" class="btn-primary">Crear Roadmap</a>
+    </div>
+  } @else {
+    <div class="roadmaps-grid">
+      @for (roadmap of roadmaps(); track roadmap.id) {
+        <article class="roadmap-card">
+          <div class="card-header">
+            <span class="category-badge" [class]="roadmap.category">{{ roadmap.category }}</span>
+            <span class="difficulty-badge" [class]="roadmap.difficulty">{{ roadmap.difficulty }}</span>
+          </div>
+          <h3>{{ roadmap.title }}</h3>
+          <p class="description">{{ roadmap.description }}</p>
+          <div class="card-meta">
+            <span>⏱️ {{ roadmap.estimatedHours }}h</span>
+            <span>📍 {{ roadmap.nodes.length }} nodos</span>
+          </div>
+          <div class="card-actions">
+            <a [routerLink]="['/roadmaps', roadmap.id]" class="btn-view">Ver Detalles</a>
+            <a [routerLink]="['/roadmaps', roadmap.id, 'edit']" class="btn-edit">Editar</a>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>

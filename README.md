@@ -1,52 +1,118 @@
-# CodeCompass
+# 🧭 CodeCompass
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.2.
+Plataforma web para gestionar roadmaps de programación personalizados para alumnos de repaso.
 
-## Development server
+## Características
 
-To start a local development server, run:
+- 📚 **Gestión de Estudiantes**: Crear, editar y gestionar perfiles de alumnos
+- 🗺️ **Roadmaps Personalizados**: Crear rutas de aprendizaje visuales e interactivas
+- 📈 **Seguimiento de Progreso**: Monitorizar el avance de cada estudiante
+- 🔐 **Autenticación Segura**: Sistema de login con Supabase Auth
+
+## Tecnologías
+
+- **Angular 21** - Framework frontend con signals y control flow
+- **Supabase** - Backend as a Service (Auth + PostgreSQL)
+- **TypeScript** - Tipado estático
+- **Reactive Forms** - Formularios reactivos
+
+## Arquitectura del Proyecto
+
+```
+src/app/
+├── core/                     # Servicios singleton y guards
+│   ├── guards/
+│   │   └── auth.guard.ts
+│   └── services/
+│       ├── auth.service.ts
+│       └── supabase.service.ts
+├── features/                 # Módulos de características (lazy loaded)
+│   ├── auth/                 # Login y registro
+│   ├── dashboard/            # Panel principal
+│   ├── students/             # Gestión de alumnos
+│   └── roadmaps/             # Gestión de roadmaps
+├── models/                   # Interfaces y tipos
+│   ├── user.model.ts
+│   ├── student.model.ts
+│   └── roadmap.model.ts
+├── shared/                   # Componentes reutilizables
+│   └── layouts/
+│       └── main-layout/
+└── environments/             # Configuración de entornos
+```
+
+## Configuración
+
+### 1. Clonar e Instalar
+
+```bash
+git clone <repo-url>
+cd CodeCompass
+npm install
+```
+
+### 2. Configurar Supabase
+
+1. Crea un proyecto en [Supabase](https://supabase.com)
+2. Ejecuta el script SQL en `supabase/schema.sql` en el SQL Editor
+3. Copia tus credenciales en `src/environments/environment.ts`:
+
+```typescript
+export const environment = {
+  production: false,
+  supabase: {
+    url: 'https://tu-proyecto.supabase.co',
+    anonKey: 'tu-anon-key',
+  },
+};
+```
+
+### 3. Ejecutar en Desarrollo
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Abre `http://localhost:4200/`
 
-## Code scaffolding
+## Scripts Disponibles
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+| Comando | Descripción |
+|---------|-------------|
+| `npm start` | Servidor de desarrollo |
+| `npm run build` | Build de producción |
+| `npm test` | Ejecutar tests con Vitest |
 
-```bash
-ng generate component component-name
-```
+## Estructura de la Base de Datos
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- **profiles**: Perfiles de usuario (extiende auth.users)
+- **students**: Datos de estudiantes
+- **roadmaps**: Roadmaps con nodos y conexiones (JSON)
+- **roadmap_assignments**: Asignaciones de roadmaps a estudiantes
+- **student_progress**: Progreso de estudiantes en cada roadmap
 
-```bash
-ng generate --help
-```
+## Mejores Prácticas Implementadas
 
-## Building
+- ✅ Standalone Components (sin NgModules)
+- ✅ Signals para estado reactivo
+- ✅ Reactive Forms para formularios
+- ✅ Lazy Loading de rutas
+- ✅ ChangeDetection OnPush
+- ✅ Control Flow nativo (@if, @for, @switch)
+- ✅ inject() en lugar de constructor injection
+- ✅ Row Level Security en Supabase
 
-To build the project run:
+## Próximas Funcionalidades
 
-```bash
-ng build
-```
+- [ ] Editor visual de nodos de roadmap
+- [ ] Vista interactiva de roadmaps
+- [ ] Dashboard con métricas reales
+- [ ] Exportación a PDF
+- [ ] Notificaciones por email
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Desarrollado con ❤️ para profesores y alumnos
 
 ```bash
 ng e2e

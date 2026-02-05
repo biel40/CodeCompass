@@ -1,0 +1,149 @@
+.students-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  margin: 0 0 0.25rem;
+  color: #333;
+}
+
+.page-header p {
+  margin: 0;
+  color: #666;
+}
+
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon {
+  font-size: 4rem;
+}
+
+.empty-state h3 {
+  margin: 1rem 0 0.5rem;
+  color: #333;
+}
+
+.empty-state p {
+  margin: 0 0 1.5rem;
+  color: #666;
+}
+
+.students-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.student-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.student-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.student-info {
+  flex: 1;
+}
+
+.student-info h3 {
+  margin: 0 0 0.25rem;
+  color: #333;
+  font-size: 1rem;
+}
+
+.student-info p {
+  margin: 0 0 0.5rem;
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge.beginner {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.badge.intermediate {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.badge.advanced {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.btn-view {
+  padding: 0.5rem 1rem;
+  background: #f5f7fa;
+  color: #667eea;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-view:hover {
+  background: rgba(102, 126, 234, 0.1);
+}

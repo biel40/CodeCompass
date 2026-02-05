@@ -1,0 +1,160 @@
+.editor-page {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.back-link {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 0.875rem;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  margin: 0;
+  color: #333;
+}
+
+.roadmap-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-row {
+  margin-bottom: 1.25rem;
+}
+
+.form-row.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-row .form-group {
+  margin-bottom: 0;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+textarea {
+  resize: vertical;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-group input[type='checkbox'] {
+  width: auto;
+}
+
+.error-text {
+  color: #e53935;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.error-alert {
+  background: #ffebee;
+  color: #c62828;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.editor-placeholder {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: #f5f7fa;
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+  border: 2px dashed #ddd;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+}
+
+.editor-placeholder h3 {
+  margin: 1rem 0 0.5rem;
+  color: #333;
+}
+
+.editor-placeholder p {
+  margin: 0.25rem 0;
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.btn-cancel {
+  padding: 0.75rem 1.5rem;
+  background: #f5f7fa;
+  color: #666;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

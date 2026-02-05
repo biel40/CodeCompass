@@ -1,0 +1,56 @@
+<div class="form-page">
+  <header class="page-header">
+    <a routerLink="/students" class="back-link">← Volver</a>
+    <h1>{{ isEditMode() ? 'Editar' : 'Nuevo' }} Estudiante</h1>
+  </header>
+
+  <form [formGroup]="studentForm" (ngSubmit)="onSubmit()" class="student-form">
+    @if (errorMessage()) {
+      <div class="error-alert" role="alert">{{ errorMessage() }}</div>
+    }
+
+    <div class="form-group">
+      <label for="fullName">Nombre Completo *</label>
+      <input id="fullName" type="text" formControlName="fullName" placeholder="Nombre del alumno" />
+      @if (studentForm.get('fullName')?.touched && studentForm.get('fullName')?.errors?.['required']) {
+        <span class="error-text">El nombre es requerido</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email *</label>
+      <input id="email" type="email" formControlName="email" placeholder="email@ejemplo.com" />
+      @if (studentForm.get('email')?.touched && studentForm.get('email')?.errors?.['required']) {
+        <span class="error-text">El email es requerido</span>
+      }
+      @if (studentForm.get('email')?.touched && studentForm.get('email')?.errors?.['email']) {
+        <span class="error-text">El email no es válido</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="level">Nivel</label>
+      <select id="level" formControlName="level">
+        <option value="beginner">Principiante</option>
+        <option value="intermediate">Intermedio</option>
+        <option value="advanced">Avanzado</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Notas</label>
+      <textarea id="notes" formControlName="notes" rows="4" placeholder="Observaciones sobre el alumno..."></textarea>
+    </div>
+
+    <div class="form-actions">
+      <a routerLink="/students" class="btn-cancel">Cancelar</a>
+      <button type="submit" [disabled]="studentForm.invalid || isLoading()" class="btn-primary">
+        @if (isLoading()) {
+          Guardando...
+        } @else {
+          {{ isEditMode() ? 'Actualizar' : 'Crear' }} Estudiante
+        }
+      </button>
+    </div>
+  </form>
+</div>

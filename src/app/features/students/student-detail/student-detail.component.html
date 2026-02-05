@@ -1,0 +1,60 @@
+<div class="detail-page">
+  @if (isLoading()) {
+    <div class="loading">Cargando estudiante...</div>
+  } @else if (!student()) {
+    <div class="not-found">
+      <h2>Estudiante no encontrado</h2>
+      <a routerLink="/students" class="btn-primary">Volver a la lista</a>
+    </div>
+  } @else {
+    <header class="page-header">
+      <a routerLink="/students" class="back-link">← Volver</a>
+      <div class="header-content">
+        <div class="student-header">
+          <div class="avatar">{{ getInitials(student()!.fullName) }}</div>
+          <div>
+            <h1>{{ student()!.fullName }}</h1>
+            <p>{{ student()!.email }}</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a [routerLink]="['/students', student()!.id, 'edit']" class="btn-edit">Editar</a>
+          <button (click)="onDelete()" class="btn-delete" type="button">Eliminar</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-grid">
+      <section class="info-card">
+        <h3>Información</h3>
+        <dl>
+          <dt>Nivel</dt>
+          <dd><span class="badge" [class]="student()!.level">{{ student()!.level }}</span></dd>
+          <dt>Estado</dt>
+          <dd>
+            <span class="status" [class.active]="student()!.isActive">
+              {{ student()!.isActive ? 'Activo' : 'Inactivo' }}
+            </span>
+          </dd>
+          <dt>Fecha de registro</dt>
+          <dd>{{ formatDate(student()!.createdAt) }}</dd>
+        </dl>
+      </section>
+
+      <section class="info-card">
+        <h3>Notas</h3>
+        <p class="notes">{{ student()!.notes ?? 'Sin notas' }}</p>
+      </section>
+
+      <section class="info-card roadmaps-section">
+        <div class="section-header">
+          <h3>Roadmaps Asignados</h3>
+          <a [routerLink]="['/roadmaps/assign', student()!.id]" class="btn-small">+ Asignar</a>
+        </div>
+        <div class="empty-roadmaps">
+          <p>No hay roadmaps asignados</p>
+        </div>
+      </section>
+    </div>
+  }
+</div>

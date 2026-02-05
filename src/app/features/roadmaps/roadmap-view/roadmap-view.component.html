@@ -1,0 +1,65 @@
+<div class="view-page">
+  @if (isLoading()) {
+    <div class="loading">Cargando roadmap...</div>
+  } @else if (!roadmap()) {
+    <div class="not-found">
+      <h2>Roadmap no encontrado</h2>
+      <a routerLink="/roadmaps" class="btn-primary">Volver a la lista</a>
+    </div>
+  } @else {
+    <header class="page-header">
+      <a routerLink="/roadmaps" class="back-link">← Volver</a>
+      <div class="header-content">
+        <div class="roadmap-info">
+          <div class="badges">
+            <span class="category-badge" [class]="roadmap()!.category">{{ roadmap()!.category }}</span>
+            <span class="difficulty-badge" [class]="roadmap()!.difficulty">{{ roadmap()!.difficulty }}</span>
+          </div>
+          <h1>{{ roadmap()!.title }}</h1>
+          <p>{{ roadmap()!.description }}</p>
+        </div>
+        <div class="header-actions">
+          <a [routerLink]="['/roadmaps', roadmap()!.id, 'edit']" class="btn-edit">Editar</a>
+          <button (click)="onDelete()" class="btn-delete" type="button">Eliminar</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-grid">
+      <section class="info-card">
+        <h3>Detalles</h3>
+        <dl>
+          <dt>Horas Estimadas</dt>
+          <dd>{{ roadmap()!.estimatedHours }} horas</dd>
+          <dt>Nodos</dt>
+          <dd>{{ roadmap()!.nodes.length }} temas</dd>
+          <dt>Visibilidad</dt>
+          <dd>{{ roadmap()!.isPublic ? 'Público' : 'Privado' }}</dd>
+          <dt>Creado</dt>
+          <dd>{{ formatDate(roadmap()!.createdAt) }}</dd>
+        </dl>
+      </section>
+
+      <section class="info-card">
+        <h3>Tags</h3>
+        @if (roadmap()!.tags.length > 0) {
+          <div class="tags-list">
+            @for (tag of roadmap()!.tags; track tag) {
+              <span class="tag">{{ tag }}</span>
+            }
+          </div>
+        } @else {
+          <p class="no-tags">Sin tags</p>
+        }
+      </section>
+
+      <section class="info-card roadmap-canvas">
+        <h3>Visualización del Roadmap</h3>
+        <div class="canvas-placeholder">
+          <span class="placeholder-icon">🗺️</span>
+          <p>El visor interactivo de roadmaps estará disponible próximamente.</p>
+        </div>
+      </section>
+    </div>
+  }
+</div>
