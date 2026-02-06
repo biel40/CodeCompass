@@ -4,9 +4,7 @@ import { AuthChangeEvent, Session, User as SupabaseUser } from '@supabase/supaba
 import { AuthState, User } from '../../models';
 import { SupabaseService } from './supabase.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class AuthService {
   private readonly supabase = inject(SupabaseService);
   private readonly router = inject(Router);

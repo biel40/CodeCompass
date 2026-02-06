@@ -22,6 +22,28 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - It MUST pass all AXE checks.
 - It MUST follow all WCAG AA minimums, including focus management, color contrast, and ARIA attributes.
 
+## Responsive Design
+
+- It is ESSENTIAL to verify that every new component looks good and adapts correctly on mobile screens.
+- All components MUST include responsive styles (media queries or fluid layouts) to ensure proper display on devices from 320px wide and up.
+- Test and verify layouts at common breakpoints: mobile (≤480px), tablet (≤768px), and desktop (>768px).
+
+## Dark Mode (Default Theme)
+
+- The application uses a **dark theme by default** (Revolut-inspired design).
+- All components MUST use CSS custom properties defined in `src/styles.css` instead of hardcoded color values.
+- Key variables to use:
+  - Backgrounds: `--color-bg-dark`, `--color-bg-card`, `--color-bg-input`, `--color-bg-hover`
+  - Text: `--color-text`, `--color-text-secondary`, `--color-text-muted`
+  - Borders: `--color-border`, `--color-border-light`
+  - Accents: `--color-primary`, `--color-primary-light`, `--color-accent-secondary`
+  - Status: `--color-success`, `--color-warning`, `--color-error`
+  - Shadows: `--shadow-sm`, `--shadow-md`, `--shadow-lg`, `--shadow-glow`
+  - Radius: `--radius-sm`, `--radius-md`, `--radius-lg`
+  - Transitions: `--transition-fast`, `--transition-normal`, `--transition-slow`
+- Do NOT use hardcoded light-theme colors like `white`, `#333`, `#666`, `#f5f7fa`, etc.
+- For semi-transparent status badges, use `rgba()` with the appropriate status color variable value (e.g., `rgba(0, 196, 140, 0.15)` for success backgrounds).
+
 ### Components
 
 - Keep components small and focused on a single responsibility

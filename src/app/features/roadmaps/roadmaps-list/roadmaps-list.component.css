@@ -13,40 +13,41 @@
 
 .page-header h1 {
   margin: 0 0 0.25rem;
-  color: #333;
+  color: var(--color-text);
 }
 
 .page-header p {
   margin: 0;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .btn-primary {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-primary));
+  color: var(--color-text);
   text-decoration: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   font-weight: 600;
-  transition: transform 0.2s;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
 }
 
 .loading {
   text-align: center;
   padding: 3rem;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
 }
 
 .empty-icon {
@@ -55,25 +56,31 @@
 
 .empty-state h3 {
   margin: 1rem 0 0.5rem;
-  color: #333;
+  color: var(--color-text);
 }
 
 .empty-state p {
   margin: 0 0 1.5rem;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .roadmaps-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .roadmap-card {
-  background: white;
+  background: var(--color-bg-card);
   padding: 1.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.roadmap-card:hover {
+  border-color: var(--color-border-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .card-header {
@@ -92,52 +99,52 @@
 }
 
 .category-badge.frontend {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: rgba(6, 102, 235, 0.15);
+  color: var(--color-primary-light);
 }
 
 .category-badge.backend {
-  background: #e8f5e9;
-  color: #388e3c;
+  background: rgba(0, 196, 140, 0.15);
+  color: var(--color-success);
 }
 
 .category-badge.fullstack {
-  background: #f3e5f5;
-  color: #8e24aa;
+  background: rgba(123, 97, 255, 0.15);
+  color: var(--color-accent-secondary);
 }
 
 .category-badge.devops {
-  background: #fff3e0;
-  color: #f57c00;
+  background: rgba(255, 184, 0, 0.15);
+  color: var(--color-warning);
 }
 
 .difficulty-badge.beginner {
-  background: #e8f5e9;
-  color: #388e3c;
+  background: rgba(0, 196, 140, 0.15);
+  color: var(--color-success);
 }
 
 .difficulty-badge.intermediate {
-  background: #fff3e0;
-  color: #f57c00;
+  background: rgba(255, 184, 0, 0.15);
+  color: var(--color-warning);
 }
 
 .difficulty-badge.advanced {
-  background: #ffebee;
-  color: #e53935;
+  background: rgba(255, 77, 77, 0.15);
+  color: var(--color-error);
 }
 
 .difficulty-badge.expert {
-  background: #fce4ec;
-  color: #c2185b;
+  background: rgba(123, 97, 255, 0.15);
+  color: var(--color-accent-secondary);
 }
 
 .roadmap-card h3 {
   margin: 0 0 0.5rem;
-  color: #333;
+  color: var(--color-text);
 }
 
 .description {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.875rem;
   margin: 0 0 1rem;
   line-height: 1.5;
@@ -151,7 +158,7 @@
 .card-meta {
   display: flex;
   gap: 1rem;
-  color: #666;
+  color: var(--color-text-muted);
   font-size: 0.875rem;
   margin-bottom: 1rem;
 }
@@ -164,23 +171,55 @@
 .btn-view,
 .btn-edit {
   padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: background 0.2s;
+  transition: background var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .btn-view {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-primary));
+  color: var(--color-text);
+}
+
+.btn-view:hover {
+  box-shadow: var(--shadow-glow);
 }
 
 .btn-edit {
-  background: #f5f7fa;
-  color: #667eea;
+  background: var(--color-bg-input);
+  color: var(--color-primary-light);
 }
 
 .btn-edit:hover {
-  background: rgba(102, 126, 234, 0.1);
+  background: var(--color-bg-hover);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .roadmaps-page {
+    padding: 1rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .roadmaps-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .btn-view,
+  .btn-edit {
+    text-align: center;
+  }
 }

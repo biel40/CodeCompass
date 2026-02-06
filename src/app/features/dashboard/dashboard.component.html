@@ -1,72 +1,94 @@
 <div class="dashboard">
-  <header class="dashboard-header">
-    <div class="logo">
-      <h1>🧭 CodeCompass</h1>
-    </div>
-    <nav class="nav-links">
-      <a routerLink="/dashboard" class="active">Dashboard</a>
-      <a routerLink="/students">Estudiantes</a>
-      <a routerLink="/roadmaps">Roadmaps</a>
-    </nav>
-    <div class="user-menu">
-      <span class="user-name">{{ userName() }}</span>
-      <button (click)="onLogout()" class="btn-logout" type="button">Cerrar Sesión</button>
-    </div>
-  </header>
+  <section class="welcome-section">
+    <h2>¡Bienvenido, {{ userName() }}!</h2>
+    <p>Gestiona los roadmaps de programación personalizados para tus alumnos.</p>
+  </section>
 
-  <main class="dashboard-content">
-    <section class="welcome-section">
-      <h2>¡Bienvenido, {{ userName() }}!</h2>
-      <p>Gestiona los roadmaps de programación personalizados para tus alumnos.</p>
-    </section>
-
-    <section class="stats-grid">
-      <article class="stat-card">
-        <div class="stat-icon">👥</div>
-        <div class="stat-info">
-          <span class="stat-value">0</span>
-          <span class="stat-label">Estudiantes</span>
-        </div>
-      </article>
-      <article class="stat-card">
-        <div class="stat-icon">🗺️</div>
-        <div class="stat-info">
-          <span class="stat-value">0</span>
-          <span class="stat-label">Roadmaps</span>
-        </div>
-      </article>
-      <article class="stat-card">
-        <div class="stat-icon">✅</div>
-        <div class="stat-info">
-          <span class="stat-value">0</span>
-          <span class="stat-label">Completados</span>
-        </div>
-      </article>
-      <article class="stat-card">
-        <div class="stat-icon">📈</div>
-        <div class="stat-info">
-          <span class="stat-value">0%</span>
-          <span class="stat-label">Progreso General</span>
-        </div>
-      </article>
-    </section>
-
-    <section class="quick-actions">
-      <h3>Acciones Rápidas</h3>
-      <div class="actions-grid">
-        <a routerLink="/students/new" class="action-card">
-          <span class="action-icon">➕</span>
-          <span class="action-text">Nuevo Estudiante</span>
-        </a>
-        <a routerLink="/roadmaps/new" class="action-card">
-          <span class="action-icon">🗺️</span>
-          <span class="action-text">Crear Roadmap</span>
-        </a>
-        <a routerLink="/roadmaps" class="action-card">
-          <span class="action-icon">📚</span>
-          <span class="action-text">Ver Plantillas</span>
-        </a>
+  <section class="stats-grid" aria-label="Estadísticas generales">
+    <article class="stat-card">
+      <div class="stat-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
       </div>
-    </section>
-  </main>
+      <div class="stat-info">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Estudiantes</span>
+      </div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 2 7 12 12 22 7 12 2" />
+          <polyline points="2 17 12 22 22 17" />
+          <polyline points="2 12 12 17 22 12" />
+        </svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Roadmaps</span>
+      </div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-icon stat-icon--success" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+          <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Completados</span>
+      </div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-icon stat-icon--accent" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+          <polyline points="17 6 23 6 23 12" />
+        </svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">0%</span>
+        <span class="stat-label">Progreso General</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="quick-actions" aria-label="Acciones rápidas">
+    <div class="actions-grid">
+      <a routerLink="/students/new" class="action-card">
+        <div class="action-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="16" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+          </svg>
+        </div>
+        <span class="action-text">Nuevo Estudiante</span>
+      </a>
+      <a routerLink="/roadmaps/new" class="action-card">
+        <div class="action-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2" />
+            <polyline points="2 17 12 22 22 17" />
+            <polyline points="2 12 12 17 22 12" />
+          </svg>
+        </div>
+        <span class="action-text">Crear Roadmap</span>
+      </a>
+      <a routerLink="/roadmaps" class="action-card">
+        <div class="action-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+        </div>
+        <span class="action-text">Ver Plantillas</span>
+      </a>
+    </div>
+  </section>
 </div>

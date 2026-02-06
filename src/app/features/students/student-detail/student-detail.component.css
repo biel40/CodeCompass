@@ -8,12 +8,18 @@
 .not-found {
   text-align: center;
   padding: 3rem;
+  color: var(--color-text-secondary);
 }
 
 .back-link {
-  color: #667eea;
+  color: var(--color-primary-light);
   text-decoration: none;
   font-size: 0.875rem;
+  transition: color var(--transition-fast);
+}
+
+.back-link:hover {
+  color: var(--color-accent);
 }
 
 .page-header {
@@ -37,8 +43,8 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-primary));
+  color: var(--color-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,12 +54,12 @@
 
 h1 {
   margin: 0 0 0.25rem;
-  color: #333;
+  color: var(--color-text);
 }
 
 .student-header p {
   margin: 0;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .header-actions {
@@ -63,48 +69,63 @@ h1 {
 
 .btn-edit {
   padding: 0.5rem 1rem;
-  background: #f5f7fa;
-  color: #667eea;
+  background: var(--color-bg-input);
+  color: var(--color-primary-light);
   text-decoration: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   font-weight: 500;
+  transition: background var(--transition-fast);
+}
+
+.btn-edit:hover {
+  background: var(--color-bg-hover);
 }
 
 .btn-delete {
   padding: 0.5rem 1rem;
-  background: #ffebee;
-  color: #e53935;
-  border: none;
-  border-radius: 0.5rem;
+  background: rgba(255, 77, 77, 0.15);
+  color: var(--color-error);
+  border: 1px solid rgba(255, 77, 77, 0.3);
+  border-radius: var(--radius-sm);
   font-weight: 500;
   cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.btn-delete:hover {
+  background: rgba(255, 77, 77, 0.25);
 }
 
 .btn-primary {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-primary));
+  color: var(--color-text);
   text-decoration: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   font-weight: 600;
 }
 
 .content-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .info-card {
-  background: white;
+  background: var(--color-bg-card);
   padding: 1.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  transition: border-color var(--transition-fast);
+}
+
+.info-card:hover {
+  border-color: var(--color-border-light);
 }
 
 .info-card h3 {
   margin: 0 0 1rem;
-  color: #333;
+  color: var(--color-text);
   font-size: 1rem;
 }
 
@@ -113,14 +134,14 @@ dl {
 }
 
 dt {
-  color: #666;
+  color: var(--color-text-muted);
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
 }
 
 dd {
   margin: 0 0 1rem;
-  color: #333;
+  color: var(--color-text);
 }
 
 .badge {
@@ -133,30 +154,30 @@ dd {
 }
 
 .badge.beginner {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: rgba(6, 102, 235, 0.15);
+  color: var(--color-primary-light);
 }
 
 .badge.intermediate {
-  background: #fff3e0;
-  color: #f57c00;
+  background: rgba(255, 184, 0, 0.15);
+  color: var(--color-warning);
 }
 
 .badge.advanced {
-  background: #e8f5e9;
-  color: #388e3c;
+  background: rgba(0, 196, 140, 0.15);
+  color: var(--color-success);
 }
 
 .status {
-  color: #e53935;
+  color: var(--color-error);
 }
 
 .status.active {
-  color: #388e3c;
+  color: var(--color-success);
 }
 
 .notes {
-  color: #666;
+  color: var(--color-text-secondary);
   line-height: 1.6;
   margin: 0;
 }
@@ -178,18 +199,52 @@ dd {
 
 .btn-small {
   padding: 0.375rem 0.75rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-primary));
+  color: var(--color-text);
   text-decoration: none;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-sm);
   font-size: 0.875rem;
   font-weight: 500;
+  transition: box-shadow var(--transition-fast);
+}
+
+.btn-small:hover {
+  box-shadow: var(--shadow-glow);
 }
 
 .empty-roadmaps {
   text-align: center;
   padding: 2rem;
-  color: #666;
-  background: #f5f7fa;
-  border-radius: 0.5rem;
+  color: var(--color-text-muted);
+  background: var(--color-bg-input);
+  border-radius: var(--radius-sm);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .detail-page {
+    padding: 1rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-actions {
+    width: 100%;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    flex: 1;
+    text-align: center;
+  }
 }

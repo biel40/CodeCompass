@@ -13,8 +13,4 @@ export class DashboardComponent {
   private readonly authService = inject(AuthService);
 
   protected readonly userName = computed(() => this.authService.user()?.fullName ?? 'Usuario');
-
-  onLogout(): void {
-    this.authService.signOut();
-  }
 }
