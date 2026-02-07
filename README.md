@@ -5,16 +5,21 @@ Plataforma web para gestionar roadmaps de programación personalizados para alum
 ## Características
 
 - 📚 **Gestión de Estudiantes**: Crear, editar y gestionar perfiles de alumnos
+  - Niveles: Principiante, Intermedio, Avanzado
 - 🗺️ **Roadmaps Personalizados**: Crear rutas de aprendizaje visuales e interactivas
+  - Categorías: Frontend, Backend, Fullstack, DevOps, Mobile, Data Science, AI/ML
+  - Dificultades: Principiante, Intermedio, Avanzado, Experto
 - 📈 **Seguimiento de Progreso**: Monitorizar el avance de cada estudiante
-- 🔐 **Autenticación Segura**: Sistema de login con Supabase Auth
+- 🔐 **Autenticación Segura**: Sistema de login con Supabase Auth con roles (Admin, Profesor, Alumno)
 
 ## Tecnologías
 
-- **Angular 21** - Framework frontend con signals y control flow
+- **Angular 21.1.0** - Framework frontend con signals y control flow moderno
 - **Supabase** - Backend as a Service (Auth + PostgreSQL)
-- **TypeScript** - Tipado estático
-- **Reactive Forms** - Formularios reactivos
+- **TypeScript 5.9.2** - Tipado estático
+- **RxJS 7.8** - Programación reactiva
+- **Vitest** - Testing framework rápido a nivel de componente
+- **Reactive Forms** - Formularios reactivos fuertemente tipados
 
 ## Arquitectura del Proyecto
 
@@ -79,34 +84,49 @@ Abre `http://localhost:4200/`
 
 | Comando | Descripción |
 |---------|-------------|
-| `npm start` | Servidor de desarrollo |
+| `npm start` (o `npm run start`) | Servidor de desarrollo en `http://localhost:4200/` |
 | `npm run build` | Build de producción |
 | `npm test` | Ejecutar tests con Vitest |
+| `npm run watch` | Build en modo watch con configuración de desarrollo |
 
 ## Estructura de la Base de Datos
 
-- **profiles**: Perfiles de usuario (extiende auth.users)
+### Tablas Principales
+- **profiles**: Perfiles de usuario (extiende `auth.users`)
+  - Roles: admin, teacher, student
+  - Campos: id, email, full_name, avatar_url, role, created_at, updated_at
+  
 - **students**: Datos de estudiantes
-- **roadmaps**: Roadmaps con nodos y conexiones (JSON)
-- **roadmap_assignments**: Asignaciones de roadmaps a estudiantes
-- **student_progress**: Progreso de estudiantes en cada roadmap
-
-## Mejores Prácticas Implementadas
-
-- ✅ Standalone Components (sin NgModules)
-- ✅ Signals para estado reactivo
-- ✅ Reactive Forms para formularios
-- ✅ Lazy Loading de rutas
-- ✅ ChangeDetection OnPush
+  - Niveles: beginner, intermediate, advanced
+  - Campos: id, user_id, full_name, email, avatar_url, level, enrollment_date, notes, is_active, created_by, created_at, updated_at
+  
+- **roadmaps**: Rutas de aprendizaje con estructura de nodos
+  - Categorías: frontend, backend,  fuertemente tipados
+- ✅ Lazy Loading de rutas por feature
+- ✅ ChangeDetection OnPush en todos los componentes
 - ✅ Control Flow nativo (@if, @for, @switch)
-- ✅ inject() en lugar de constructor injection
-- ✅ Row Level Security en Supabase
+- ✅ Función `inject()` en lugar de constructor injection
+- ✅ Row Level Security (RLS) en Supabase
+- ✅ Decoradores de host bindings modernos
+- ✅ Imágenes optimizadas con NgOptimizedImage
+- ✅ Tipado estricto de TypeScript en todo el código
 
 ## Próximas Funcionalidades
 
-- [ ] Editor visual de nodos de roadmap
-- [ ] Vista interactiva de roadmaps
-- [ ] Dashboard con métricas reales
+- [ ] Editor visual interactivo de nodos de roadmap
+- [ ] Dashboard con métricas y análisis de progreso
+- [ ] Exportación de roadmaps a PDF
+- [ ] Sistema de notificaciones por email
+- [ ] Búsqueda y filtrado avanzado de roadmaps
+- [ ] Colaboración en tiempo real en roadmaps
+
+---
+
+Desarrollado con ❤️ para profesores y alumnos
+
+## Recursos Adicionales
+
+Para más información sobre Angular CLI, consulta la [documentación oficial](https://angular.dev/tools/cli)
 - [ ] Exportación a PDF
 - [ ] Notificaciones por email
 
