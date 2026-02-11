@@ -46,3 +46,7 @@ Thumbs.db
 # Environment secrets
 .env
 .env.local
+
+# Generated environment files (contain secrets)
+src/environments/environment.ts
+src/environments/environment.prod.ts

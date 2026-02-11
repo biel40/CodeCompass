@@ -1,80 +1,184 @@
-<div class="auth-container">
-  <div class="auth-card">
-    <h1>Crear Cuenta</h1>
-    <p class="subtitle">Únete a CodeCompass</p>
-
-    @if (errorMessage()) {
-      <div class="error-alert" role="alert">
-        {{ errorMessage() }}
+<div class="auth-page">
+  <div class="auth-container">
+    <!-- Logo & Branding -->
+    <div class="brand">
+      <div class="logo">
+        <span class="logo-icon">🧭</span>
       </div>
-    }
-
-    @if (successMessage()) {
-      <div class="success-alert" role="alert">
-        {{ successMessage() }}
-      </div>
-    }
-
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="fullName">Nombre Completo</label>
-        <input
-          id="fullName"
-          type="text"
-          formControlName="fullName"
-          placeholder="Tu nombre"
-          autocomplete="name"
-        />
-        @if (registerForm.get('fullName')?.touched && registerForm.get('fullName')?.errors?.['required']) {
-          <span class="error-text">El nombre es requerido</span>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="tu@email.com"
-          autocomplete="email"
-        />
-        @if (registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['required']) {
-          <span class="error-text">El email es requerido</span>
-        }
-        @if (registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['email']) {
-          <span class="error-text">El email no es válido</span>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="password">Contraseña</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          placeholder="Mínimo 6 caracteres"
-          autocomplete="new-password"
-        />
-        @if (registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['required']) {
-          <span class="error-text">La contraseña es requerida</span>
-        }
-        @if (registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['minlength']) {
-          <span class="error-text">Mínimo 6 caracteres</span>
-        }
-      </div>
-
-      <button type="submit" [disabled]="registerForm.invalid || isLoading()" class="btn-primary">
-        @if (isLoading()) {
-          <span>Creando cuenta...</span>
-        } @else {
-          <span>Crear Cuenta</span>
-        }
-      </button>
-    </form>
-
-    <div class="auth-links">
-      <a routerLink="/auth/login">¿Ya tienes cuenta? Inicia sesión</a>
+      <h1 class="brand-name">CodeCompass</h1>
+      <p class="brand-tagline">Comienza tu viaje hacia el desarrollo profesional</p>
     </div>
+
+    <!-- Register Card -->
+    <div class="auth-card">
+      <div class="card-header">
+        <h2>Crear cuenta</h2>
+        <p>Únete a nuestra comunidad de desarrolladores</p>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="error-alert" role="alert">
+          <svg class="error-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd"/>
+          </svg>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      @if (successMessage()) {
+        <div class="success-alert" role="alert">
+          <svg class="success-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/>
+          </svg>
+          <span>{{ successMessage() }}</span>
+        </div>
+      }
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="fullName">Nombre completo</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <input
+              id="fullName"
+              type="text"
+              formControlName="fullName"
+              placeholder="Tu nombre completo"
+              autocomplete="name"
+              [class.input-error]="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid"
+            />
+          </div>
+          @if (registerForm.get('fullName')?.touched && registerForm.get('fullName')?.errors?.['required']) {
+            <span class="error-text">El nombre es requerido</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="tu@email.com"
+              autocomplete="email"
+              [class.input-error]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
+            />
+          </div>
+          @if (registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['required']) {
+            <span class="error-text">El email es requerido</span>
+          }
+          @if (registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['email']) {
+            <span class="error-text">Introduce un email válido</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              placeholder="Mínimo 6 caracteres"
+              autocomplete="new-password"
+              [class.input-error]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
+            />
+          </div>
+          @if (registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['required']) {
+            <span class="error-text">La contraseña es requerida</span>
+          }
+          @if (registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['minlength']) {
+            <span class="error-text">La contraseña debe tener al menos 6 caracteres</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirmar contraseña</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <input
+              id="confirmPassword"
+              type="password"
+              formControlName="confirmPassword"
+              placeholder="Repite tu contraseña"
+              autocomplete="new-password"
+              [class.input-error]="registerForm.get('confirmPassword')?.touched && registerForm.get('confirmPassword')?.invalid"
+            />
+          </div>
+          @if (registerForm.get('confirmPassword')?.touched && registerForm.get('confirmPassword')?.errors?.['required']) {
+            <span class="error-text">Debes confirmar la contraseña</span>
+          }
+          @if (registerForm.get('confirmPassword')?.touched && registerForm.get('confirmPassword')?.errors?.['passwordMismatch']) {
+            <span class="error-text">Las contraseñas no coinciden</span>
+          }
+        </div>
+
+        <button 
+          type="submit" 
+          [disabled]="registerForm.invalid || isLoading()" 
+          class="btn-primary"
+          [class.loading]="isLoading()"
+        >
+          @if (isLoading()) {
+            <span class="spinner"></span>
+            <span>Creando cuenta...</span>
+          } @else {
+            <span>Crear cuenta</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          }
+        </button>
+      </form>
+
+      <div class="divider">
+        <span>o regístrate con</span>
+      </div>
+
+      <div class="social-login">
+        <button type="button" class="btn-social" aria-label="Registrarse con Google">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          <span>Google</span>
+        </button>
+        <button type="button" class="btn-social" aria-label="Registrarse con GitHub">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          <span>GitHub</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Login Link -->
+    <div class="auth-footer">
+      <p>¿Ya tienes una cuenta? <a routerLink="/auth/login">Iniciar sesión</a></p>
+    </div>
+  </div>
+
+  <!-- Decorative Background -->
+  <div class="bg-decoration">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
   </div>
 </div>

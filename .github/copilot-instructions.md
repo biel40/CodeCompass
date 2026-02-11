@@ -1,6 +1,13 @@
 
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
+## Language / Idioma
+
+- This application is **Spanish-only** (Español únicamente).
+- All user-facing text (labels, buttons, messages, errors, placeholders, tooltips) MUST be written in Spanish.
+- Use `lang="es"` in the HTML element.
+- Do NOT use English for any text that users will see in the UI.
+
 ## TypeScript Best Practices
 
 - Use strict type checking

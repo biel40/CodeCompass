@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core';
 
@@ -23,7 +23,20 @@ export class RegisterComponent {
     fullName: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
-  });
+    confirmPassword: ['', [Validators.required]],
+  }, { validators: this.passwordMatchValidator });
+
+  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
+
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+
+    return null;
+  }
 
   async onSubmit(): Promise<void> {
     if (this.registerForm.invalid) return;
@@ -38,9 +51,9 @@ export class RegisterComponent {
     this.isLoading.set(false);
 
     if (result.success) {
-      this.successMessage.set('Cuenta creada. Revisa tu email para confirmar.');
+      this.successMessage.set('¡Cuenta creada con éxito! Revisa tu email para confirmar tu cuenta.');
     } else {
-      this.errorMessage.set(result.error ?? 'Error al crear cuenta');
+      this.errorMessage.set(result.error ?? 'Error al crear la cuenta');
     }
   }
 }

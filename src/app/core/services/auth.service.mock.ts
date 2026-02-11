@@ -85,6 +85,11 @@ export class MockAuthService {
     return { success: true };
   }
 
+  async updatePassword(_newPassword: string): Promise<{ success: boolean; error?: string }> {
+    await this.delay(300);
+    return { success: true };
+  }
+
   clearError(): void {
     this.state.update((s) => ({ ...s, error: null }));
   }

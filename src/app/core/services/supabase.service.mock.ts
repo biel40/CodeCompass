@@ -59,7 +59,7 @@ export class MockSupabaseService {
   }
 
   private createMockProxy(name: string): unknown {
-    console.warn(`[MockSupabaseService] Accessing "${name}" — returning mock.`);
+    console.warn(`[MockSupabaseService] Accediendo a "${name}" — devolviendo mock.`);
     return {};
   }
 }
