@@ -61,6 +61,11 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "hmr": true,
+            "liveReload": true,
+            "poll": 1000
+          },
           "configurations": {
             "production": {
               "buildTarget": "CodeCompass:build:production"
