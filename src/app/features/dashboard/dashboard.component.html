@@ -60,7 +60,7 @@
           </svg>
         </div>
         <div class="stat-info">
-          <span class="stat-value">0</span>
+          <span class="stat-value">{{ isLoadingStats() ? '...' : stats().students }}</span>
           <span class="stat-label">Estudiantes</span>
         </div>
       </article>
@@ -73,7 +73,7 @@
           </svg>
         </div>
         <div class="stat-info">
-          <span class="stat-value">0</span>
+          <span class="stat-value">{{ isLoadingStats() ? '...' : stats().roadmaps }}</span>
           <span class="stat-label">Roadmaps</span>
         </div>
       </article>
@@ -85,7 +85,7 @@
           </svg>
         </div>
         <div class="stat-info">
-          <span class="stat-value">0</span>
+          <span class="stat-value">{{ isLoadingStats() ? '...' : stats().completed }}</span>
           <span class="stat-label">Completados</span>
         </div>
       </article>
@@ -97,7 +97,7 @@
           </svg>
         </div>
         <div class="stat-info">
-          <span class="stat-value">0%</span>
+          <span class="stat-value">{{ isLoadingStats() ? '...%' : stats().overallProgress + '%' }}</span>
           <span class="stat-label">Progreso General</span>
         </div>
       </article>

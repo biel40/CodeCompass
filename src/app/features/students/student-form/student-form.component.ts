@@ -23,7 +23,7 @@ export class StudentFormComponent implements OnInit {
 
   protected readonly studentForm = this.fb.nonNullable.group({
     fullName: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.email]],
     level: ['beginner' as StudentLevel],
     notes: [''],
   });

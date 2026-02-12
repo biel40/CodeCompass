@@ -15,7 +15,7 @@ export interface Student {
   id: string;
   userId: string;
   fullName: string;
-  email: string;
+  email?: string;
   avatarUrl?: string;
   level: StudentLevel;
   enrollmentDate: Date;

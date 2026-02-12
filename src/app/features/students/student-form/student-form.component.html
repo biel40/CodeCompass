@@ -30,11 +30,8 @@
     </div>
 
     <div class="form-group">
-      <label for="email">Email *</label>
-      <input id="email" type="email" formControlName="email" placeholder="email@ejemplo.com" />
-      @if (studentForm.get('email')?.touched && studentForm.get('email')?.errors?.['required']) {
-        <span class="error-text">El email es requerido</span>
-      }
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" placeholder="email@ejemplo.com (opcional)" />
       @if (studentForm.get('email')?.touched && studentForm.get('email')?.errors?.['email']) {
         <span class="error-text">El email no es válido</span>
       }
