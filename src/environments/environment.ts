@@ -1,5 +1,3 @@
-// ⚠️ ARCHIVO GENERADO AUTOMÁTICAMENTE - NO EDITAR
-// Ejecuta "npm run env" para regenerar desde variables de entorno
 export const environment = {
   production: false,
   useMocks: false,
