@@ -1,23 +1,39 @@
 <div class="students-page">
-  <header class="page-header">
+  <header class="page-header anim-fade-in">
     <div>
       <h1>Estudiantes</h1>
       <p>Gestiona tus alumnos de repaso</p>
     </div>
-    <a routerLink="/students/new" class="btn-primary">+ Nuevo Estudiante</a>
+    <a routerLink="/students/new" class="btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+      Nuevo Estudiante
+    </a>
   </header>
 
   @if (isLoading()) {
-    <div class="loading">Cargando estudiantes...</div>
+    <div class="loading anim-fade-in">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <span>Cargando estudiantes...</span>
+    </div>
   } @else if (students().length === 0) {
-    <div class="empty-state">
-      <span class="empty-icon">👥</span>
+    <div class="empty-state anim-fade-in">
+      <div class="empty-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      </div>
       <h3>No hay estudiantes</h3>
       <p>Añade tu primer alumno para comenzar</p>
       <a routerLink="/students/new" class="btn-primary">Añadir Estudiante</a>
     </div>
   } @else {
-    <div class="students-grid">
+    <div class="students-grid anim-fade-in anim-delay-1">
       @for (student of students(); track student.id) {
         <article class="student-card">
           <div class="student-avatar">
@@ -28,7 +44,12 @@
             <p>{{ student.email }}</p>
             <span class="badge" [class]="student.level">{{ student.level }}</span>
           </div>
-          <a [routerLink]="['/students', student.id]" class="btn-view">Ver Perfil</a>
+          <a [routerLink]="['/students', student.id]" class="btn-view">
+            Ver Perfil
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </a>
         </article>
       }
     </div>

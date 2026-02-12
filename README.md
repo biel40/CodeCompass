@@ -6,15 +6,9 @@ Plataforma web para gestionar roadmaps de programación personalizados para alum
 
 Antes de ejecutar el proyecto, debes configurar las credenciales de Supabase:
 
-```bash
-# 1. Copia el archivo de ejemplo
-cp .env.example .env
+# Genera los archivos de environment e inicia el servidor
 
-# 2. Edita .env y completa con tus credenciales de Supabase
-# ⚠️ USA LA ANON KEY (la pública), NO LA SECRET KEY
-# Dashboard → Settings → API → anon public key
-
-# 3. Genera los archivos de environment e inicia el servidor
+```
 npm start
 ```
 

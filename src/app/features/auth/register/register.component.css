@@ -407,54 +407,58 @@ input.input-error:focus {
 .gradient-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.4;
+  filter: blur(120px);
+  opacity: 0.25;
+  will-change: transform;
 }
 
 .orb-1 {
-  width: 400px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
   background: var(--color-primary);
-  top: -200px;
-  right: -100px;
-  animation: floatOrb1 8s ease-in-out infinite;
+  top: -250px;
+  right: -150px;
+  animation: floatOrb1 20s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .orb-2 {
-  width: 300px;
-  height: 300px;
+  width: 400px;
+  height: 400px;
   background: var(--color-accent-secondary);
-  bottom: -150px;
-  left: -100px;
-  animation: floatOrb2 10s ease-in-out infinite;
+  bottom: -200px;
+  left: -150px;
+  animation: floatOrb2 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .orb-3 {
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
   background: var(--color-accent);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  opacity: 0.2;
-  animation: floatOrb3 12s ease-in-out infinite;
+  opacity: 0.15;
+  animation: floatOrb3 30s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes floatOrb1 {
-  0%, 100% { transform: translate(0, 0); }
-  33% { transform: translate(30px, 20px); }
-  66% { transform: translate(-20px, 10px); }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(15px, 10px) scale(1.02); }
+  50% { transform: translate(-10px, 15px) scale(0.98); }
+  75% { transform: translate(5px, -10px) scale(1.01); }
 }
 
 @keyframes floatOrb2 {
-  0%, 100% { transform: translate(0, 0); }
-  33% { transform: translate(-25px, -15px); }
-  66% { transform: translate(15px, -25px); }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-12px, -8px) scale(0.98); }
+  50% { transform: translate(8px, -12px) scale(1.02); }
+  75% { transform: translate(-5px, 8px) scale(0.99); }
 }
 
 @keyframes floatOrb3 {
   0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.2); }
+  33% { transform: translate(-48%, -52%) scale(1.05); }
+  66% { transform: translate(-52%, -48%) scale(0.95); }
 }
 
 /* Responsive */

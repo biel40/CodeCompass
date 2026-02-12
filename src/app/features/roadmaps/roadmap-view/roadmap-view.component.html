@@ -1,14 +1,29 @@
 <div class="view-page">
   @if (isLoading()) {
-    <div class="loading">Cargando roadmap...</div>
+    <div class="loading anim-fade-in">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <span>Cargando roadmap...</span>
+    </div>
   } @else if (!roadmap()) {
-    <div class="not-found">
+    <div class="not-found anim-fade-in">
+      <div class="not-found-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="15" y1="9" x2="9" y2="15" />
+          <line x1="9" y1="9" x2="15" y2="15" />
+        </svg>
+      </div>
       <h2>Roadmap no encontrado</h2>
       <a routerLink="/roadmaps" class="btn-primary">Volver a la lista</a>
     </div>
   } @else {
-    <header class="page-header">
-      <a routerLink="/roadmaps" class="back-link">← Volver</a>
+    <header class="page-header anim-fade-in">
+      <a routerLink="/roadmaps" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+        Volver
+      </a>
       <div class="header-content">
         <div class="roadmap-info">
           <div class="badges">
@@ -19,22 +34,47 @@
           <p>{{ roadmap()!.description }}</p>
         </div>
         <div class="header-actions">
-          <a [routerLink]="['/roadmaps', roadmap()!.id, 'edit']" class="btn-edit">Editar</a>
-          <button (click)="onDelete()" class="btn-delete" type="button">Eliminar</button>
+          <a [routerLink]="['/roadmaps', roadmap()!.id, 'edit']" class="btn-edit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            Editar
+          </a>
+          <button (click)="onDelete()" class="btn-delete" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+            Eliminar
+          </button>
         </div>
       </div>
     </header>
 
-    <div class="content-grid">
+    <div class="content-grid anim-fade-in anim-delay-1">
       <section class="info-card">
         <h3>Detalles</h3>
         <dl>
           <dt>Horas Estimadas</dt>
-          <dd>{{ roadmap()!.estimatedHours }} horas</dd>
+          <dd>
+            <span class="detail-with-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              {{ roadmap()!.estimatedHours }} horas
+            </span>
+          </dd>
           <dt>Nodos</dt>
           <dd>{{ roadmap()!.nodes.length }} temas</dd>
           <dt>Visibilidad</dt>
-          <dd>{{ roadmap()!.isPublic ? 'Público' : 'Privado' }}</dd>
+          <dd>
+            <span class="visibility-badge" [class.public]="roadmap()!.isPublic">
+              <span class="visibility-dot" aria-hidden="true"></span>
+              {{ roadmap()!.isPublic ? 'Público' : 'Privado' }}
+            </span>
+          </dd>
           <dt>Creado</dt>
           <dd>{{ formatDate(roadmap()!.createdAt) }}</dd>
         </dl>
@@ -56,7 +96,13 @@
       <section class="info-card roadmap-canvas">
         <h3>Visualización del Roadmap</h3>
         <div class="canvas-placeholder">
-          <span class="placeholder-icon">🗺️</span>
+          <div class="placeholder-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12 2 2 7 12 12 22 7 12 2" />
+              <polyline points="2 17 12 22 22 17" />
+              <polyline points="2 12 12 17 22 12" />
+            </svg>
+          </div>
           <p>El visor interactivo de roadmaps estará disponible próximamente.</p>
         </div>
       </section>

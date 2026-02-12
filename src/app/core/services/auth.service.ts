@@ -66,7 +66,7 @@ export class AuthService {
   }
 
   private async handleAuthChange(event: AuthChangeEvent, session: Session | null): Promise<void> {
-    if (event === 'SIGNED_IN' && session?.user) {
+    if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
       await this.loadUserProfile(session.user);
     } else if (event === 'SIGNED_OUT') {
       this.state.set({
@@ -178,20 +178,11 @@ export class AuthService {
       return { success: false, error: error.message };
     }
 
-    if (data.user) {
-      await this.createUserProfile(data.user.id, fullName, email);
-    }
+    // El perfil se crea automáticamente mediante un trigger en Supabase
+    // cuando se inserta un nuevo usuario en auth.users
 
+    this.state.update((s) => ({ ...s, isLoading: false }));
     return { success: true };
-  }
-
-  private async createUserProfile(userId: string, fullName: string, email: string): Promise<void> {
-    await this.supabase.from('profiles').insert({
-      id: userId,
-      full_name: fullName,
-      email,
-      role: 'student',
-    });
   }
 
   /**
