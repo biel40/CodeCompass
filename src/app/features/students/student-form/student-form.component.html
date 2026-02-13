@@ -21,6 +21,41 @@
       </div>
     }
 
+    <!-- Avatar Picker -->
+    <div class="avatar-picker">
+      <div class="avatar-preview" [class.has-image]="avatarPreview()">
+        @if (avatarPreview()) {
+          <img [src]="avatarPreview()" alt="Avatar del estudiante" />
+          <button type="button" class="avatar-remove" (click)="removeAvatar()" title="Eliminar imagen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        } @else {
+          <span class="avatar-initials">{{ getInitials(studentForm.controls.fullName.value || 'NN') }}</span>
+        }
+      </div>
+      <div class="avatar-actions">
+        <label for="avatarInput" class="btn-upload">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          {{ avatarPreview() ? 'Cambiar imagen' : 'Subir imagen' }}
+        </label>
+        <input
+          type="file"
+          id="avatarInput"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          class="visually-hidden"
+        />
+        <span class="avatar-hint">JPG, PNG o GIF. Máx. 2MB</span>
+      </div>
+    </div>
+
     <div class="form-group">
       <label for="fullName">Nombre Completo *</label>
       <input id="fullName" type="text" formControlName="fullName" placeholder="Nombre del alumno" />

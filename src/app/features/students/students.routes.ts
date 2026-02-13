@@ -17,4 +17,19 @@ export const STUDENTS_ROUTES: Routes = [
     path: ':id/edit',
     loadComponent: () => import('./student-form/student-form.component').then((m) => m.StudentFormComponent),
   },
+  {
+    path: ':studentId/bundles/new',
+    loadComponent: () =>
+      import('./student-bundle-form/student-bundle-form.component').then((m) => m.StudentBundleFormComponent),
+  },
+  {
+    path: ':studentId/bundles/:bundleId',
+    loadComponent: () =>
+      import('./student-bundle-detail/student-bundle-detail.component').then((m) => m.StudentBundleDetailComponent),
+  },
+  {
+    path: ':studentId/bundles/:bundleId/edit',
+    loadComponent: () =>
+      import('./student-bundle-form/student-bundle-form.component').then((m) => m.StudentBundleFormComponent),
+  },
 ];

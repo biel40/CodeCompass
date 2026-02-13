@@ -2,7 +2,7 @@
 
 Plataforma web para gestionar roadmaps de programación personalizados para alumnos de repaso.
 
-## ⚠️ Configuración Inicial (IMPORTANTE)
+## ⚠️ Configuración Inicial
 
 Antes de ejecutar el proyecto, debes configurar las credenciales de Supabase:
 

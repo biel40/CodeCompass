@@ -94,23 +94,77 @@ export class StudentsService {
    * @returns Resultado de la operación
    */
   async updateStudent(id: string, student: Partial<Student>): Promise<{ success: boolean; error?: string }> {
-    const { error } = await this.supabase
-      .from('students')
-      .update({
-        full_name: student.fullName,
-        email: student.email,
-        level: student.level,
-        notes: student.notes,
-        is_active: student.isActive,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', id);
+    const updateData: Record<string, unknown> = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (student.fullName !== undefined) updateData['full_name'] = student.fullName;
+    if (student.email !== undefined) updateData['email'] = student.email;
+    if (student.level !== undefined) updateData['level'] = student.level;
+    if (student.notes !== undefined) updateData['notes'] = student.notes;
+    if (student.isActive !== undefined) updateData['is_active'] = student.isActive;
+    if (student.avatarUrl !== undefined) updateData['avatar_url'] = student.avatarUrl;
+
+    const { error } = await this.supabase.from('students').update(updateData).eq('id', id);
 
     if (error) {
       return { success: false, error: error.message };
     }
 
     return { success: true };
+  }
+
+  /**
+   * Sube una imagen de avatar para un estudiante.
+   * @param studentId - UUID del estudiante
+   * @param file - Archivo de imagen a subir
+   * @returns URL pública del avatar o error
+   */
+  async uploadAvatar(studentId: string, file: File): Promise<{ success: boolean; url?: string; error?: string }> {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${studentId}/avatar.${fileExt}`;
+
+    // Subir archivo al bucket de avatars
+    const { error: uploadError } = await this.supabase.storage('avatars').upload(fileName, file, {
+      upsert: true,
+      contentType: file.type,
+    });
+
+    if (uploadError) {
+      this.logError('Error al subir avatar:', uploadError);
+      return { success: false, error: uploadError.message };
+    }
+
+    // Obtener URL pública
+    const { data } = this.supabase.storage('avatars').getPublicUrl(fileName);
+
+    // Actualizar el estudiante con la nueva URL
+    const updateResult = await this.updateStudent(studentId, {
+      avatarUrl: data.publicUrl,
+    });
+
+    if (!updateResult.success) {
+      return { success: false, error: updateResult.error };
+    }
+
+    return { success: true, url: data.publicUrl };
+  }
+
+  /**
+   * Elimina el avatar de un estudiante.
+   * @param studentId - UUID del estudiante
+   */
+  async deleteAvatar(studentId: string): Promise<{ success: boolean; error?: string }> {
+    // Listar archivos en la carpeta del estudiante
+    const { data: files } = await this.supabase.storage('avatars').list(studentId);
+
+    if (files && files.length > 0) {
+      const filesToDelete = files.map((f) => `${studentId}/${f.name}`);
+      await this.supabase.storage('avatars').remove(filesToDelete);
+    }
+
+    // Limpiar la URL en la base de datos
+    return this.updateStudent(studentId, { avatarUrl: undefined });
   }
 
   /**

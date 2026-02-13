@@ -20,6 +20,8 @@ export class StudentFormComponent implements OnInit {
   protected readonly isEditMode = signal(false);
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly avatarPreview = signal<string | null>(null);
+  protected readonly currentAvatarUrl = signal<string | null>(null);
 
   protected readonly studentForm = this.fb.nonNullable.group({
     fullName: ['', [Validators.required]],
@@ -29,6 +31,7 @@ export class StudentFormComponent implements OnInit {
   });
 
   private studentId: string | null = null;
+  private selectedFile: File | null = null;
 
   async ngOnInit(): Promise<void> {
     this.studentId = this.route.snapshot.paramMap.get('id');
@@ -51,7 +54,55 @@ export class StudentFormComponent implements OnInit {
         level: student.level,
         notes: student.notes ?? '',
       });
+
+      if (student.avatarUrl) {
+        this.currentAvatarUrl.set(student.avatarUrl);
+        this.avatarPreview.set(student.avatarUrl);
+      }
     }
+  }
+
+  getInitials(name: string): string {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      this.errorMessage.set('Por favor, selecciona una imagen válida');
+      return;
+    }
+
+    // Validar tamaño (máximo 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      this.errorMessage.set('La imagen no puede superar los 2MB');
+      return;
+    }
+
+    this.selectedFile = file;
+    this.errorMessage.set(null);
+
+    // Crear preview
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.avatarPreview.set(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeAvatar(): void {
+    this.selectedFile = null;
+    this.avatarPreview.set(null);
   }
 
   async onSubmit(): Promise<void> {
@@ -62,9 +113,38 @@ export class StudentFormComponent implements OnInit {
 
     const formData = this.studentForm.getRawValue();
 
-    const result = this.isEditMode()
-      ? await this.studentsService.updateStudent(this.studentId!, formData)
-      : await this.studentsService.createStudent(formData);
+    let result;
+
+    if (this.isEditMode()) {
+      result = await this.studentsService.updateStudent(this.studentId!, formData);
+
+      // Subir avatar si hay uno nuevo
+      if (result.success && this.selectedFile) {
+        const uploadResult = await this.studentsService.uploadAvatar(this.studentId!, this.selectedFile);
+        if (!uploadResult.success) {
+          this.errorMessage.set(uploadResult.error ?? 'Error al subir la imagen');
+          this.isLoading.set(false);
+          return;
+        }
+      }
+
+      // Eliminar avatar si se quitó
+      if (result.success && this.currentAvatarUrl() && !this.avatarPreview()) {
+        await this.studentsService.deleteAvatar(this.studentId!);
+      }
+    } else {
+      result = await this.studentsService.createStudent(formData);
+
+      // Subir avatar para el nuevo estudiante
+      if (result.success && this.selectedFile && result.data) {
+        const uploadResult = await this.studentsService.uploadAvatar(result.data.id, this.selectedFile);
+        if (!uploadResult.success) {
+          this.errorMessage.set(uploadResult.error ?? 'Error al subir la imagen');
+          this.isLoading.set(false);
+          return;
+        }
+      }
+    }
 
     this.isLoading.set(false);
 

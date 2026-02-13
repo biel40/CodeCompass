@@ -26,7 +26,13 @@
       </a>
       <div class="header-content">
         <div class="student-header">
-          <div class="avatar">{{ getInitials(student()!.fullName) }}</div>
+          <div class="avatar" [class.has-image]="student()!.avatarUrl">
+            @if (student()!.avatarUrl) {
+              <img [src]="student()!.avatarUrl" [alt]="student()!.fullName" />
+            } @else {
+              {{ getInitials(student()!.fullName) }}
+            }
+          </div>
           <div>
             <h1>{{ student()!.fullName }}</h1>
             <p>{{ student()!.email ?? 'Sin email registrado' }}</p>
@@ -69,9 +75,82 @@
         </dl>
       </section>
 
+      <!-- Earnings Summary -->
+      @if (earnings(); as e) {
+        <section class="info-card earnings-card">
+          <h3>Resumen de Ingresos</h3>
+          <div class="earnings-stats">
+            <div class="stat">
+              <span class="stat-value paid">{{ e.totalPaid }}€</span>
+              <span class="stat-label">Cobrado</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value pending">{{ e.totalPending }}€</span>
+              <span class="stat-label">Pendiente</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">{{ e.totalSessions }}</span>
+              <span class="stat-label">Clases</span>
+            </div>
+          </div>
+        </section>
+      }
+
       <section class="info-card">
         <h3>Notas</h3>
         <p class="notes">{{ student()!.notes ?? 'Sin notas' }}</p>
+      </section>
+
+      <!-- Bundles Section -->
+      <section class="info-card bundles-section">
+        <div class="section-header">
+          <h3>Bonos</h3>
+          <a [routerLink]="['/students', student()!.id, 'bundles', 'new']" class="btn-small">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Nuevo Bono
+          </a>
+        </div>
+        @if (bundles().length === 0) {
+          <div class="empty-bundles">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            <p>No hay bonos asignados</p>
+          </div>
+        } @else {
+          <ul class="bundles-list">
+            @for (bundle of bundles(); track bundle.id) {
+              <li class="bundle-item">
+                <a [routerLink]="['/students', student()!.id, 'bundles', bundle.id]" class="bundle-link">
+                  <div class="bundle-info">
+                    <span class="bundle-name">{{ bundle.name }}</span>
+                    <span class="bundle-meta">
+                      {{ bundle.classesUsed }}/{{ bundle.totalClasses }} clases · {{ bundle.totalPrice }}€
+                      @if (!bundle.isPaid) {
+                        <span class="unpaid-indicator">· Pendiente</span>
+                      }
+                    </span>
+                  </div>
+                  <div class="bundle-progress">
+                    <div class="progress-bar">
+                      <div class="progress-fill" [style.width.%]="getBundleProgress(bundle)"></div>
+                    </div>
+                    <span class="status-badge" [class]="bundle.status">{{ getStatusLabel(bundle.status) }}</span>
+                  </div>
+                  <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </a>
+              </li>
+            }
+          </ul>
+        }
       </section>
 
       <section class="info-card roadmaps-section">

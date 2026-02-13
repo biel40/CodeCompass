@@ -36,16 +36,22 @@
     <div class="students-grid anim-fade-in anim-delay-1">
       @for (student of students(); track student.id) {
         <article class="student-card">
-          <div class="student-avatar">
-            {{ getInitials(student.fullName) }}
-          </div>
-          <div class="student-info">
-            <h3>{{ student.fullName }}</h3>
-            <p>{{ student.email ?? 'Sin email' }}</p>
+          <div class="card-header">
+            <div class="student-avatar" [class.has-image]="student.avatarUrl">
+              @if (student.avatarUrl) {
+                <img [src]="student.avatarUrl" [alt]="student.fullName" />
+              } @else {
+                {{ getInitials(student.fullName) }}
+              }
+            </div>
+            <div class="student-info">
+              <h3>{{ student.fullName }}</h3>
+              <p>{{ student.email ?? 'Sin email' }}</p>
+            </div>
             <span class="badge" [class]="student.level">{{ student.level }}</span>
           </div>
           <a [routerLink]="['/students', student.id]" class="btn-view">
-            Ver Perfil
+            <span>Ver Perfil</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <polyline points="9 18 15 12 9 6" />
             </svg>

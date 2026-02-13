@@ -1,0 +1,114 @@
+<div class="form-page">
+  <header class="page-header anim-fade-in">
+    <a [routerLink]="['/students', student()?.id]" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Volver al estudiante
+    </a>
+    <h1>{{ isEditMode() ? 'Editar Bono' : 'Nuevo Bono' }}</h1>
+    @if (student(); as s) {
+      <p>Para: {{ s.fullName }}</p>
+    }
+  </header>
+
+  <form [formGroup]="bundleForm" (ngSubmit)="onSubmit()" class="bundle-form anim-fade-in anim-delay-1">
+    @if (errorMessage(); as error) {
+      <div class="error-message" role="alert">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        {{ error }}
+      </div>
+    }
+
+    @if (bundleTemplates().length > 0 && !isEditMode()) {
+      <div class="form-group">
+        <label for="bundleId">Usar plantilla (opcional)</label>
+        <select id="bundleId" formControlName="bundleId" (change)="onTemplateChange()">
+          <option value="">-- Crear bono personalizado --</option>
+          @for (template of bundleTemplates(); track template.id) {
+            <option [value]="template.id">
+              {{ template.name }} ({{ template.totalClasses }} clases - {{ template.defaultPrice }}€)
+            </option>
+          }
+        </select>
+      </div>
+    }
+
+    <div class="form-group">
+      <label for="name">Nombre del bono *</label>
+      <input type="text" id="name" formControlName="name" placeholder="Ej: Bono 5 clases - Febrero" />
+      @if (bundleForm.controls.name.invalid && bundleForm.controls.name.touched) {
+        <span class="field-error">El nombre es obligatorio</span>
+      }
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="totalClasses">Número de clases *</label>
+        <input type="number" id="totalClasses" formControlName="totalClasses" min="1" />
+        @if (bundleForm.controls.totalClasses.invalid && bundleForm.controls.totalClasses.touched) {
+          <span class="field-error">Mínimo 1 clase</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="totalPrice">Precio total (€) *</label>
+        <input type="number" id="totalPrice" formControlName="totalPrice" min="0" step="0.01" />
+        @if (bundleForm.controls.totalPrice.invalid && bundleForm.controls.totalPrice.touched) {
+          <span class="field-error">El precio debe ser positivo</span>
+        }
+      </div>
+    </div>
+
+    <div class="price-summary">
+      <span class="label">Precio por clase:</span>
+      <span class="value">{{ pricePerClass() }}€</span>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="isPaid" />
+        <span class="checkmark"></span>
+        Pagado
+      </label>
+    </div>
+
+    @if (bundleForm.controls.isPaid.value) {
+      <div class="form-group">
+        <label for="paymentDate">Fecha de pago</label>
+        <input type="date" id="paymentDate" formControlName="paymentDate" />
+      </div>
+    }
+
+    <div class="form-group">
+      <label for="expiresAt">Fecha de expiración (opcional)</label>
+      <input type="date" id="expiresAt" formControlName="expiresAt" />
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Notas</label>
+      <textarea id="notes" formControlName="notes" rows="3" placeholder="Observaciones sobre el bono..."></textarea>
+    </div>
+
+    <div class="form-actions">
+      <a [routerLink]="['/students', student()?.id]" class="btn-cancel">Cancelar</a>
+      <button type="submit" class="btn-submit" [disabled]="bundleForm.invalid || isLoading()">
+        @if (isLoading()) {
+          <span class="loading-spinner" aria-hidden="true"></span>
+          Guardando...
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
+          {{ isEditMode() ? 'Guardar cambios' : 'Crear bono' }}
+        }
+      </button>
+    </div>
+  </form>
+</div>
