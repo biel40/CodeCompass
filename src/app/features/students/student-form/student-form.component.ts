@@ -118,7 +118,6 @@ export class StudentFormComponent implements OnInit {
     if (this.isEditMode()) {
       result = await this.studentsService.updateStudent(this.studentId!, formData);
 
-      // Subir avatar si hay uno nuevo
       if (result.success && this.selectedFile) {
         const uploadResult = await this.studentsService.uploadAvatar(this.studentId!, this.selectedFile);
         if (!uploadResult.success) {
@@ -128,7 +127,6 @@ export class StudentFormComponent implements OnInit {
         }
       }
 
-      // Eliminar avatar si se quitó
       if (result.success && this.currentAvatarUrl() && !this.avatarPreview()) {
         await this.studentsService.deleteAvatar(this.studentId!);
       }
