@@ -32,20 +32,35 @@
     </nav>
 
     <div class="user-section">
-      <div class="user-info">
-        <div class="user-avatar">
-          {{ userInitials() }}
-        </div>
-        <span class="user-name">{{ userName() }}</span>
+      <div class="user-menu">
+        <button 
+          (click)="toggleDropdown($event)" 
+          class="user-menu-trigger" 
+          type="button" 
+          [attr.aria-expanded]="isDropdownOpen()"
+          aria-haspopup="true"
+          aria-label="Menú de usuario">
+          <div class="user-avatar">
+            {{ userInitials() }}
+          </div>
+          <span class="user-name">{{ userName() }}</span>
+          <svg class="dropdown-arrow" [class.open]="isDropdownOpen()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        @if (isDropdownOpen()) {
+          <div class="user-dropdown" role="menu">
+            <button (click)="onLogout()" class="dropdown-item" type="button" role="menuitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              <span>Cerrar sesión</span>
+            </button>
+          </div>
+        }
       </div>
-      <button (click)="onLogout()" class="btn-logout" type="button" aria-label="Cerrar sesión">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-          <polyline points="16 17 21 12 16 7"/>
-          <line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
-        <span>Salir</span>
-      </button>
     </div>
   </header>
 

@@ -38,8 +38,41 @@
 .logo-text {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-text);
+  background: linear-gradient(90deg, var(--color-text) 0%, var(--color-text) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 100%;
   letter-spacing: -0.02em;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.logo:hover .logo-text {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-light) 0%,
+    var(--color-accent-secondary) 25%,
+    var(--color-primary) 50%,
+    var(--color-accent-secondary) 75%,
+    var(--color-primary-light) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(6, 102, 235, 0.5));
+  transform: scale(1.05);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .nav {
@@ -81,10 +114,25 @@
   gap: 1rem;
 }
 
-.user-info {
+.user-menu {
+  position: relative;
+}
+
+.user-menu-trigger {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.user-menu-trigger:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border);
 }
 
 .user-avatar {
@@ -106,30 +154,67 @@
   font-size: 0.9375rem;
 }
 
-.btn-logout {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: transparent;
+.dropdown-arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-secondary);
+  transition: transform var(--transition-fast);
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 180px;
+  background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 0.5rem;
+  z-index: 200;
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
   transition: all var(--transition-fast);
+  text-align: left;
 }
 
-.btn-logout svg {
-  width: 16px;
-  height: 16px;
+.dropdown-item svg {
+  width: 18px;
+  height: 18px;
 }
 
-.btn-logout:hover {
-  border-color: var(--color-error);
-  color: var(--color-error);
+.dropdown-item:hover {
   background: rgba(255, 77, 77, 0.1);
+  color: var(--color-error);
 }
 
 .main-content {
@@ -183,8 +268,12 @@
     display: none;
   }
 
-  .btn-logout span {
+  .dropdown-arrow {
     display: none;
+  }
+
+  .user-menu-trigger {
+    padding: 0.25rem;
   }
 
   .main-content {
@@ -221,13 +310,8 @@
     font-size: 0.75rem;
   }
 
-  .btn-logout {
-    padding: 0.375rem 0.625rem;
-  }
-
-  .btn-logout svg {
-    width: 18px;
-    height: 18px;
+  .user-dropdown {
+    min-width: 160px;
   }
 
   .main-content {
@@ -272,8 +356,13 @@
     font-size: 0.625rem;
   }
 
-  .btn-logout {
-    padding: 0.375rem 0.5rem;
+  .user-dropdown {
+    min-width: 140px;
+    right: -0.5rem;
+  }
+
+  .dropdown-item {
+    padding: 0.625rem 0.75rem;
   }
 
   .main-content {
