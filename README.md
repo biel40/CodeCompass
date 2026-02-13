@@ -2,7 +2,7 @@
 
 Plataforma web para gestionar roadmaps de programación personalizados para alumnos de repaso.
 
-## ⚠️ Configuración Inicial
+## Configuración Inicial
 
 Antes de ejecutar el proyecto, debes configurar las credenciales de Supabase:
 
@@ -108,87 +108,6 @@ Abre `http://localhost:4200/`
 | `npm test` | Ejecutar tests con Vitest |
 | `npm run watch` | Build en modo watch con configuración de desarrollo |
 
-## Despliegue en Vercel
-
-### 1. Preparación
-
-Asegúrate de tener tus credenciales de Supabase listas:
-- `SUPABASE_URL`: URL de tu proyecto Supabase
-- `SUPABASE_KEY`: Clave anon/public de tu proyecto
-
-### 2. Desplegar
-
-**Opción A: Desde la CLI de Vercel**
-
-```bash
-# Instalar Vercel CLI globalmente
-npm i -g vercel
-
-# Desplegar (sigue las instrucciones interactivas)
-vercel
-
-# Para producción
-vercel --prod
-```
-
-**Opción B: Desde el Dashboard de Vercel**
-
-1. Ve a [vercel.com](https://vercel.com) e inicia sesión
-2. Haz clic en "Add New Project"
-3. Importa tu repositorio de GitHub/GitLab/Bitbucket
-4. Configura las variables de entorno:
-   - `SUPABASE_URL` → tu URL de Supabase
-   - `SUPABASE_KEY` → tu clave anon de Supabase
-5. Haz clic en "Deploy"
-
-### 3. Configurar dominio personalizado (opcional)
-
-En el dashboard de Vercel, ve a Settings → Domains y añade tu dominio.
-
-### 4. Configurar Supabase para producción
-
-En tu proyecto de Supabase, añade la URL de tu despliegue a:
-- **Authentication → URL Configuration → Site URL**
-- **Authentication → URL Configuration → Redirect URLs**
-
-## Estructura de la Base de Datos
-
-**📚 Documentación completa**: Ver [supabase/README.md](supabase/README.md)
-
-### Tablas Principales
-- **profiles**: Perfiles de usuario (extiende `auth.users`)
-  - Roles: admin, teacher, student
-  - Campos: id, email, full_name, avatar_url, role, created_at, updated_at
-  
-- **students**: Datos de estudiantes
-  - Niveles: beginner, intermediate, advanced
-  - Campos: id, user_id, full_name, email, avatar_url, level, enrollment_date, notes, is_active, created_by, created_at, updated_at
-  
-- **roadmaps**: Rutas de aprendizaje con estructura de nodos JSON
-  - Categorías: frontend, backend, fullstack, devops, mobile, data-science, ai-ml, other
-  - Dificultades: beginner, intermediate, advanced, expert
-  - Campos: id, title, description, category, difficulty, estimated_hours, nodes (JSONB), connections (JSONB), is_public, author_id, tags, created_at, updated_at
-
-- **roadmap_assignments**: Asignaciones de roadmaps a estudiantes
-  - Estados: active, completed, paused, cancelled
-  - Campos: id, roadmap_id, student_id, assigned_by, assigned_at, due_date, notes, status, completed_at
-
-- **student_progress**: Progreso de estudiantes en roadmaps
-  - Campos: id, student_id, roadmap_id, completed_nodes (array), current_node_id, progress_percentage, started_at, last_activity_at, updated_at
-
-- **activity_log**: Registro de actividades para auditoría
-  - Campos: id, user_id, action, entity_type, entity_id, details (JSONB), ip_address, user_agent, created_at
-
-### Funciones Útiles
-- `calculate_progress_percentage(nodes[], roadmap_id)` - Calcula % de progreso
-- `get_student_stats(student_id)` - Estadísticas del estudiante
-- `get_student_roadmaps_with_progress(student_id)` - Roadmaps con progreso
-- `log_activity(action, entity_type, entity_id, details)` - Registrar actividad
-
-### Vistas
-- `students_with_stats` - Estudiantes con métricas agregadas
-- `roadmaps_with_stats` - Roadmaps con conteo de asignaciones
-
 ## Buenas Prácticas Aplicadas
 
 - ✅ Standalone Components en lugar de NgModules
@@ -202,15 +121,6 @@ En tu proyecto de Supabase, añade la URL de tu despliegue a:
 - ✅ Decoradores de host bindings modernos
 - ✅ Imágenes optimizadas con NgOptimizedImage
 - ✅ Tipado estricto de TypeScript en todo el código
-
-## Próximas Funcionalidades
-
-- [ ] Editor visual interactivo de nodos de roadmap
-- [ ] Dashboard con métricas y análisis de progreso
-- [ ] Exportación de roadmaps a PDF
-- [ ] Sistema de notificaciones por email
-- [ ] Búsqueda y filtrado avanzado de roadmaps
-- [ ] Colaboración en tiempo real en roadmaps
 
 ---
 
