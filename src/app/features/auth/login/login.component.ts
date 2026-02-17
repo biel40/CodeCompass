@@ -31,6 +31,14 @@ export class LoginComponent {
     this.errorMessage.set(null);
 
     const { email, password } = this.loginForm.getRawValue();
+
+    // Bypass temporal para desarrollo
+    if (email === 'test@testuser.com' && password === 'testadmin') {
+      this.isLoading.set(false);
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+
     const result = await this.authService.signInWithEmail(email, password);
 
     this.isLoading.set(false);
