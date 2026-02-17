@@ -29,6 +29,9 @@ yarn-error.log
 !.vscode/mcp.json
 .history/*
 
+# GitHub Copilot
+.github/copilot-instructions.md
+
 # Miscellaneous
 /.angular/cache
 .sass-cache/

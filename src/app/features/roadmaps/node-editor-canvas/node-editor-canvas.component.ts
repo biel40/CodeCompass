@@ -630,9 +630,26 @@ export class NodeEditorCanvasComponent {
     return this.resourceTypes.find((t) => t.type === type)?.label ?? type;
   }
 
+  /** Verifica si el evento viene de un campo de entrada editable. */
+  private isEditableElement(element: EventTarget | null): boolean {
+    if (!element || !(element instanceof HTMLElement)) return false;
+    const tagName = element.tagName.toLowerCase();
+    return tagName === 'input' || tagName === 'textarea' || tagName === 'select' || element.isContentEditable;
+  }
+
   /** Maneja atajos de teclado (Delete, Escape, Ctrl+D). */
   protected onKeyDown(event: KeyboardEvent): void {
     const selected = this.selectedNode();
+
+    // Ignorar si el usuario está escribiendo en un campo de entrada
+    if (this.isEditableElement(event.target)) {
+      // Solo capturar Escape para cerrar recursos en edición
+      if (event.key === 'Escape' && this.editingResource()) {
+        this.cancelResourceEdit();
+        event.preventDefault();
+      }
+      return;
+    }
 
     switch (event.key) {
       case 'Delete':

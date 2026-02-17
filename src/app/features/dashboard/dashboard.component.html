@@ -50,7 +50,7 @@
   <section class="stats-section anim-fade-in anim-delay-2" aria-label="Estadísticas generales">
     <h3>Resumen</h3>
     <div class="stats-grid">
-      <article class="stat-card">
+      <a routerLink="/students" class="stat-card stat-card--link stat-card--students">
         <div class="stat-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -63,9 +63,9 @@
           <span class="stat-value">{{ isLoadingStats() ? '...' : stats().students }}</span>
           <span class="stat-label">Estudiantes</span>
         </div>
-      </article>
-      <article class="stat-card">
-        <div class="stat-icon" aria-hidden="true">
+      </a>
+      <a routerLink="/roadmaps" class="stat-card stat-card--link stat-card--roadmaps">
+        <div class="stat-icon stat-icon--roadmaps" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="12 2 2 7 12 12 22 7 12 2" />
             <polyline points="2 17 12 22 22 17" />
@@ -76,7 +76,7 @@
           <span class="stat-value">{{ isLoadingStats() ? '...' : stats().roadmaps }}</span>
           <span class="stat-label">Roadmaps</span>
         </div>
-      </article>
+      </a>
       <article class="stat-card">
         <div class="stat-icon stat-icon--success" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

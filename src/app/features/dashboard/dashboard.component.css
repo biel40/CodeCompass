@@ -276,6 +276,36 @@
   transform: translateY(-2px);
 }
 
+/* Stat cards interactivos (enlaces) */
+.stat-card--link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.stat-card--link:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.stat-card--students:hover {
+  border-color: var(--color-primary);
+  box-shadow:
+    var(--shadow-md),
+    0 0 20px rgba(6, 102, 235, 0.15);
+}
+
+.stat-card--roadmaps:hover {
+  border-color: var(--color-accent-secondary);
+  box-shadow:
+    var(--shadow-md),
+    0 0 20px rgba(123, 97, 255, 0.15);
+}
+
+.stat-icon--roadmaps {
+  background: rgba(123, 97, 255, 0.15);
+  color: var(--color-accent-secondary);
+}
+
 .stat-icon {
   width: 48px;
   height: 48px;

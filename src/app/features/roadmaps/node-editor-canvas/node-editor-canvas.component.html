@@ -215,7 +215,13 @@
 
   <!-- Panel de edición del nodo seleccionado -->
   @if (selectedNode(); as node) {
-    <aside class="node-panel" role="region" aria-label="Editar nodo seleccionado">
+    <aside 
+      class="node-panel" 
+      role="region" 
+      aria-label="Editar nodo seleccionado"
+      (mousedown)="$event.stopPropagation()"
+      (click)="$event.stopPropagation()"
+    >
       <header class="panel-header">
         <h3>Editar Nodo</h3>
         <button
