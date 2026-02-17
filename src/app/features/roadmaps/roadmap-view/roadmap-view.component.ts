@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Roadmap } from '../../../models';
+import { Roadmap, RoadmapNode } from '../../../models';
+import { RoadmapCanvasComponent } from '../roadmap-canvas/roadmap-canvas.component';
 import { RoadmapsService } from '../roadmaps.service';
 
 @Component({
   selector: 'app-roadmap-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, RoadmapCanvasComponent],
   templateUrl: './roadmap-view.component.html',
   styleUrl: './roadmap-view.component.css',
 })
@@ -17,6 +18,7 @@ export class RoadmapViewComponent implements OnInit {
 
   protected readonly roadmap = signal<Roadmap | null>(null);
   protected readonly isLoading = signal(true);
+  protected readonly selectedNode = signal<RoadmapNode | null>(null);
 
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
@@ -29,7 +31,8 @@ export class RoadmapViewComponent implements OnInit {
     this.isLoading.set(false);
   }
 
-  formatDate(date: Date): string {
+  /** Formatea una fecha en formato largo en español. */
+  protected formatDate(date: Date): string {
     return date.toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',
@@ -37,7 +40,8 @@ export class RoadmapViewComponent implements OnInit {
     });
   }
 
-  async onDelete(): Promise<void> {
+  /** Elimina el roadmap previa confirmación del usuario. */
+  protected async onDelete(): Promise<void> {
     const roadmap = this.roadmap();
     if (!roadmap) return;
 
@@ -48,5 +52,10 @@ export class RoadmapViewComponent implements OnInit {
         this.router.navigate(['/roadmaps']);
       }
     }
+  }
+
+  /** Maneja la selección de un nodo en el canvas. */
+  protected onNodeSelected(node: RoadmapNode | null): void {
+    this.selectedNode.set(node);
   }
 }

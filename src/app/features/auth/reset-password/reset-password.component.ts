@@ -24,7 +24,8 @@ export class ResetPasswordComponent {
     confirmPassword: ['', [Validators.required]],
   });
 
-  async onSubmit(): Promise<void> {
+  /** Procesa el envío del formulario de restablecer contraseña. */
+  protected async onSubmit(): Promise<void> {
     if (this.resetForm.invalid) return;
 
     const { password, confirmPassword } = this.resetForm.getRawValue();

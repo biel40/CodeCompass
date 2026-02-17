@@ -23,7 +23,8 @@ export class LoginComponent {
     password: ['', [Validators.required]],
   });
 
-  async onSubmit(): Promise<void> {
+  /** Procesa el envío del formulario de login. */
+  protected async onSubmit(): Promise<void> {
     if (this.loginForm.invalid) return;
 
     this.isLoading.set(true);

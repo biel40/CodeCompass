@@ -62,7 +62,8 @@ export class StudentFormComponent implements OnInit {
     }
   }
 
-  getInitials(name: string): string {
+  /** Extrae las iniciales del nombre (máx. 2 caracteres). */
+  protected getInitials(name: string): string {
     return name
       .split(' ')
       .map((n) => n[0])
@@ -71,7 +72,8 @@ export class StudentFormComponent implements OnInit {
       .slice(0, 2);
   }
 
-  onFileSelected(event: Event): void {
+  /** Maneja la selección de avatar validando tipo y tamaño. */
+  protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
 
@@ -100,12 +102,14 @@ export class StudentFormComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  removeAvatar(): void {
+  /** Elimina el avatar seleccionado o existente. */
+  protected removeAvatar(): void {
     this.selectedFile = null;
     this.avatarPreview.set(null);
   }
 
-  async onSubmit(): Promise<void> {
+  /** Procesa el envío del formulario, incluyendo subida de avatar. */
+  protected async onSubmit(): Promise<void> {
     if (this.studentForm.invalid) return;
 
     this.isLoading.set(true);

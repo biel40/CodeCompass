@@ -41,7 +41,8 @@ export class StudentDetailComponent implements OnInit {
     this.isLoading.set(false);
   }
 
-  getInitials(name: string): string {
+  /** Extrae las iniciales del nombre (máx. 2 caracteres). */
+  protected getInitials(name: string): string {
     return name
       .split(' ')
       .map((n) => n[0])
@@ -50,7 +51,8 @@ export class StudentDetailComponent implements OnInit {
       .slice(0, 2);
   }
 
-  formatDate(date: Date): string {
+  /** Formatea una fecha en formato largo en español (ej: "15 de enero de 2026"). */
+  protected formatDate(date: Date): string {
     return date.toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',
@@ -58,11 +60,13 @@ export class StudentDetailComponent implements OnInit {
     });
   }
 
-  getBundleProgress(bundle: StudentBundle): number {
+  /** Calcula el porcentaje de progreso de un bono. */
+  protected getBundleProgress(bundle: StudentBundle): number {
     return Math.round((bundle.classesUsed / bundle.totalClasses) * 100);
   }
 
-  getStatusLabel(status: string): string {
+  /** Traduce el estado del bono al español. */
+  protected getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
       active: 'Activo',
       completed: 'Completado',
@@ -72,16 +76,16 @@ export class StudentDetailComponent implements OnInit {
     return labels[status] ?? status;
   }
 
-  async onDelete(): Promise<void> {
+  /** Elimina el estudiante previa confirmación. */
+  protected async onDelete(): Promise<void> {
     const student = this.student();
     if (!student) return;
+    if (!confirm('¿Eliminar este estudiante?')) return;
 
-    if (confirm(`¿Estás seguro de eliminar a ${student.fullName}?`)) {
-      const result = await this.studentsService.deleteStudent(student.id);
+    const result = await this.studentsService.deleteStudent(student.id);
 
-      if (result.success) {
-        this.router.navigate(['/students']);
-      }
+    if (result.success) {
+      this.router.navigate(['/students']);
     }
   }
 }

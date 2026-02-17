@@ -27,7 +27,8 @@ export class StudentsListComponent implements OnInit {
     this.isLoading.set(false);
   }
 
-  getInitials(name: string): string {
+  /** Extrae las iniciales del nombre del estudiante (máx. 2 caracteres). */
+  protected getInitials(name: string): string {
     return name
       .split(' ')
       .map((n) => n[0])

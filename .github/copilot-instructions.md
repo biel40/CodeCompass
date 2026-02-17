@@ -84,3 +84,57 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+## Access Modifiers (Convención del proyecto)
+
+- **`protected`** para todos los métodos y propiedades que se usan **desde el template** (HTML). Esto permite que Angular acceda a ellos en el template y a la vez impide el acceso externo desde otros componentes/servicios.
+- **`private`** para métodos auxiliares internos que **no se usan en el template**.
+- **`public`** (implícito) solo para métodos/propiedades que forman parte de la API pública del componente (inputs, outputs, métodos invocados por otros componentes o servicios).
+- Añadir **JSDoc conciso** (una línea) a cada método que no sea trivial.
+
+## Arquitectura del Proyecto
+
+### Estructura de carpetas
+
+```
+src/app/
+├── core/            # Servicios singleton, guards, interceptores
+│   ├── guards/      # AuthGuard y futuros guards
+│   └── services/    # AuthService, SupabaseService + mocks
+├── features/        # Módulos funcionales (lazy-loaded)
+│   ├── auth/        # Login, register, forgot/reset password
+│   ├── dashboard/   # Panel principal del usuario
+│   ├── roadmaps/    # Editor visual de roadmaps (canvas + nodos)
+│   └── students/    # Gestión de alumnos y bundles
+├── models/          # Interfaces y tipos del dominio
+└── shared/          # Componentes, pipes, directivas reutilizables
+    └── layouts/     # MainLayout (sidebar + router-outlet)
+```
+
+### Routing y Lazy Loading
+
+- Cada feature tiene su propio archivo `*.routes.ts` con `Routes`.
+- Las rutas de features se cargan con `loadChildren` desde `app.routes.ts`.
+- La autenticación usa un `AuthGuard` funcional basado en `CanActivateFn`.
+
+### Backend — Supabase
+
+- `SupabaseService` encapsula toda la comunicación con Supabase (auth, database, storage).
+- `AuthService` gestiona el estado de autenticación (sesión, usuario actual) a través de signals.
+- Existe un sistema de **mocks** (`*.service.mock.ts`) que se activan con `environment.useMocks` para desarrollo sin backend.
+- Al crear nuevos servicios que interactúen con Supabase, **siempre crear también el mock correspondiente**.
+
+### Node Editor Canvas (Editor visual de roadmaps)
+
+- Componente complejo que implementa un canvas con zoom/pan y nodos arrastrables.
+- **Coordenadas**: El canvas usa un espacio de 3000×3000px con `transform: scale()` para zoom. Las conversiones mouse→canvas deben dividir por `zoomLevel` y restar los offsets del pan y la toolbar.
+- **Conexiones SVG**: Se renderizan en una capa `<svg>` con dimensiones fijas (3000×3000px, sin `viewBox`) que se escala igual que el canvas mediante CSS transform.
+- **Dimensiones dinámicas**: `getNodeWidth()`, `getNodeHeight()` y `getToolbarHeight()` devuelven valores responsivos basados en breakpoints CSS para mantener consistencia entre lógica TS y estilos.
+- **Estado**: Usa signals para todo el estado local (nodos, conexiones, zoom, selección, edición de recursos).
+
+### Patrones generales
+
+- **Señales sobre Observables** para estado local de componentes. Los observables se reservan para streams asíncronos (HTTP, real-time).
+- **Barrel exports** (`index.ts`) en `core/`, `models/` y `shared/` para facilitar importaciones.
+- **OnPush** obligatorio en todos los componentes para optimizar el change detection.
+- **Formularios reactivos** (`FormGroup`, `FormControl`) en lugar de template-driven forms.

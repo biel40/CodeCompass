@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DifficultyLevel, RoadmapCategory } from '../../../models';
+import { DifficultyLevel, RoadmapCategory, RoadmapConnection, RoadmapNode } from '../../../models';
+import { NodeEditorCanvasComponent } from '../node-editor-canvas/node-editor-canvas.component';
 import { RoadmapsService } from '../roadmaps.service';
 
 @Component({
   selector: 'app-roadmap-editor',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, NodeEditorCanvasComponent],
   templateUrl: './roadmap-editor.component.html',
   styleUrl: './roadmap-editor.component.css',
 })
@@ -20,6 +21,12 @@ export class RoadmapEditorComponent implements OnInit {
   protected readonly isEditMode = signal(false);
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+
+  /** Nodos del roadmap */
+  protected readonly nodes = signal<RoadmapNode[]>([]);
+
+  /** Conexiones entre nodos */
+  protected readonly connections = signal<RoadmapConnection[]>([]);
 
   protected readonly roadmapForm = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
@@ -57,10 +64,25 @@ export class RoadmapEditorComponent implements OnInit {
         tags: roadmap.tags.join(', '),
         isPublic: roadmap.isPublic,
       });
+
+      // Cargar nodos y conexiones
+      this.nodes.set(roadmap.nodes ?? []);
+      this.connections.set(roadmap.connections ?? []);
     }
   }
 
-  async onSubmit(): Promise<void> {
+  /** Actualiza los nodos desde el editor visual. */
+  protected onNodesChange(nodes: RoadmapNode[]): void {
+    this.nodes.set(nodes);
+  }
+
+  /** Actualiza las conexiones desde el editor visual. */
+  protected onConnectionsChange(connections: RoadmapConnection[]): void {
+    this.connections.set(connections);
+  }
+
+  /** Procesa el envío del formulario de roadmap. */
+  protected async onSubmit(): Promise<void> {
     if (this.roadmapForm.invalid) return;
 
     this.isLoading.set(true);
@@ -75,8 +97,8 @@ export class RoadmapEditorComponent implements OnInit {
     const roadmapData = {
       ...formData,
       tags,
-      nodes: [],
-      connections: [],
+      nodes: this.nodes(),
+      connections: this.connections(),
     };
 
     const result = this.isEditMode()

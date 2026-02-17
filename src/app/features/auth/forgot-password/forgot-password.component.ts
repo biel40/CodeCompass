@@ -22,7 +22,8 @@ export class ForgotPasswordComponent {
     email: ['', [Validators.required, Validators.email]],
   });
 
-  async onSubmit(): Promise<void> {
+  /** Procesa el envío del formulario de recuperación de contraseña. */
+  protected async onSubmit(): Promise<void> {
     if (this.forgotForm.invalid) return;
 
     this.isLoading.set(true);

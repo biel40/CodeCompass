@@ -89,18 +89,26 @@
       </label>
     </div>
 
-    <div class="editor-placeholder">
-      <div class="placeholder-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <!-- Editor visual de nodos -->
+    <section class="nodes-editor-section">
+      <h2 class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <polygon points="12 2 2 7 12 12 22 7 12 2" />
           <polyline points="2 17 12 22 22 17" />
           <polyline points="2 12 12 17 22 12" />
         </svg>
-      </div>
-      <h3>Editor Visual de Nodos</h3>
-      <p>El editor visual de roadmaps estará disponible próximamente.</p>
-      <p>Podrás crear nodos, conectarlos y añadir recursos interactivamente.</p>
-    </div>
+        Editor Visual de Nodos
+      </h2>
+      <p class="section-description">
+        Añade nodos usando la barra de herramientas. Arrastra para posicionarlos y conecta los puntos para crear dependencias.
+      </p>
+      <app-node-editor-canvas
+        [nodes]="nodes()"
+        [connections]="connections()"
+        (nodesChange)="onNodesChange($event)"
+        (connectionsChange)="onConnectionsChange($event)"
+      />
+    </section>
 
     <div class="form-actions">
       <a routerLink="/roadmaps" class="btn-cancel">Cancelar</a>

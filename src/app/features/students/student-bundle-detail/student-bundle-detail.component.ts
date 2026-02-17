@@ -65,7 +65,8 @@ export class StudentBundleDetailComponent implements OnInit {
     this.isLoading.set(false);
   }
 
-  formatDate(date: Date): string {
+  /** Formatea una fecha en formato largo en español. */
+  protected formatDate(date: Date): string {
     return date.toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',
@@ -73,14 +74,16 @@ export class StudentBundleDetailComponent implements OnInit {
     });
   }
 
-  formatShortDate(date: Date): string {
+  /** Formatea una fecha en formato corto (ej: "15 ene"). */
+  protected formatShortDate(date: Date): string {
     return date.toLocaleDateString('es-ES', {
       day: '2-digit',
       month: 'short',
     });
   }
 
-  getStatusLabel(status: string): string {
+  /** Traduce el estado del bono al español. */
+  protected getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
       active: 'Activo',
       completed: 'Completado',
@@ -90,7 +93,8 @@ export class StudentBundleDetailComponent implements OnInit {
     return labels[status] ?? status;
   }
 
-  async onAddSession(): Promise<void> {
+  /** Añade una nueva sesión de clase al bono actual. */
+  protected async onAddSession(): Promise<void> {
     const bundle = this.bundle();
     if (!bundle || !this.studentId) return;
 
@@ -115,7 +119,8 @@ export class StudentBundleDetailComponent implements OnInit {
     this.isAddingSession.set(false);
   }
 
-  async onDeleteSession(sessionId: string): Promise<void> {
+  /** Elimina una sesión de clase previa confirmación. */
+  protected async onDeleteSession(sessionId: string): Promise<void> {
     if (!confirm('¿Eliminar esta sesión?')) return;
 
     const result = await this.bundlesService.deleteClassSession(sessionId);
@@ -125,9 +130,15 @@ export class StudentBundleDetailComponent implements OnInit {
     }
   }
 
-  async onMarkAsPaid(): Promise<void> {
+  /**
+   * Marca el bono como pagado, estableciendo la fecha de pago actual. Si el bono ya está marcado como pagado, no hace nada.
+   * @returns void
+   */
+  protected async onMarkAsPaid(): Promise<void> {
     const bundle = this.bundle();
-    if (!bundle) return;
+    if (!bundle) {
+      return;
+    }
 
     const result = await this.bundlesService.markBundleAsPaid(bundle.id);
 
@@ -136,11 +147,16 @@ export class StudentBundleDetailComponent implements OnInit {
     }
   }
 
-  async onDelete(): Promise<void> {
+  /** Elimina el bono previa confirmación. */
+  protected async onDelete(): Promise<void> {
     const bundle = this.bundle();
-    if (!bundle) return;
-
-    if (!confirm(`¿Eliminar el bono "${bundle.name}"? Esta acción no se puede deshacer.`)) return;
+    if (!bundle) {
+      return;
+    }
+      
+    if (!confirm('¿Eliminar este bono?')) { 
+      return; 
+    }
 
     const result = await this.bundlesService.deleteStudentBundle(bundle.id);
 

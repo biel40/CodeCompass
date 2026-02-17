@@ -1,0 +1,405 @@
+<div
+  class="editor-wrapper"
+  #canvasContainer
+  tabindex="0"
+  role="application"
+  aria-label="Editor visual de nodos. Arrastra nodos para posicionarlos, usa los botones para añadir nodos"
+  (mousedown)="onCanvasMouseDown($event)"
+  (mousemove)="onCanvasMouseMove($event)"
+  (mouseup)="onCanvasMouseUp()"
+  (mouseleave)="onCanvasMouseUp()"
+  (wheel)="onWheel($event)"
+  (keydown)="onKeyDown($event)"
+  (click)="onCanvasClick($event)"
+>
+  <!-- Toolbar superior -->
+  <div class="toolbar" role="toolbar" aria-label="Herramientas de edición">
+    <div class="toolbar-section">
+      <span class="toolbar-label">Añadir nodo:</span>
+      <div class="toolbar-buttons">
+        <button
+          type="button"
+          class="toolbar-btn btn-topic"
+          (click)="addNode('topic')"
+          title="Añadir Tema"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+          </svg>
+          <span>Tema</span>
+        </button>
+        <button
+          type="button"
+          class="toolbar-btn btn-project"
+          (click)="addNode('project')"
+          title="Añadir Proyecto"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>Proyecto</span>
+        </button>
+        <button
+          type="button"
+          class="toolbar-btn btn-milestone"
+          (click)="addNode('milestone')"
+          title="Añadir Hito"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          <span>Hito</span>
+        </button>
+        <button
+          type="button"
+          class="toolbar-btn btn-checkpoint"
+          (click)="addNode('checkpoint')"
+          title="Añadir Checkpoint"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span>Checkpoint</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="toolbar-section toolbar-right">
+      <div class="zoom-controls">
+        <button type="button" class="zoom-btn" (click)="zoomOut()" title="Alejar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </button>
+        <span class="zoom-level">{{ zoomPercentage() }}</span>
+        <button type="button" class="zoom-btn" (click)="zoomIn()" title="Acercar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </button>
+        <button type="button" class="zoom-btn" (click)="resetView()" title="Restablecer vista">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas principal -->
+  <div class="canvas-area">
+    <div class="canvas" [style.transform]="canvasTransform()">
+      <!-- Capa de conexiones SVG -->
+      <svg class="connections-layer" aria-hidden="true">
+        <defs>
+          <marker id="arrow-required" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="var(--color-primary-light)" />
+          </marker>
+          <marker id="arrow-optional" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="var(--color-text-muted)" />
+          </marker>
+        </defs>
+
+        <!-- Conexiones existentes -->
+        @for (connection of connections(); track connection.id) {
+          <g class="connection-group" (click)="toggleConnectionRequired(connection.id); $event.stopPropagation()">
+            <path
+              class="connection-path"
+              [class.required]="connection.isRequired"
+              [class.optional]="!connection.isRequired"
+              [attr.d]="getConnectionPath(connection)"
+              [attr.marker-end]="connection.isRequired ? 'url(#arrow-required)' : 'url(#arrow-optional)'"
+            />
+            <!-- Área clickeable más grande -->
+            <path
+              class="connection-hitarea"
+              [attr.d]="getConnectionPath(connection)"
+            />
+            <!-- Botón eliminar -->
+            <foreignObject
+              class="connection-delete-wrapper"
+              [attr.x]="0"
+              [attr.y]="0"
+              width="24"
+              height="24"
+            >
+              <button
+                type="button"
+                class="connection-delete-btn"
+                (click)="deleteConnection(connection.id); $event.stopPropagation()"
+                title="Eliminar conexión"
+              >
+                ×
+              </button>
+            </foreignObject>
+          </g>
+        }
+
+        <!-- Conexión temporal mientras se crea -->
+        @if (connectionState().isConnecting) {
+          <path
+            class="connection-path temporary"
+            [attr.d]="getTemporaryConnectionPath()"
+          />
+        }
+      </svg>
+
+      <!-- Nodos -->
+      @for (node of nodes(); track node.id) {
+        <article
+          class="editor-node"
+          [class]="getNodeTypeClass(node.type)"
+          [class.selected]="selectedNode()?.id === node.id"
+          [class.is-optional]="node.isOptional"
+          [style.left.px]="node.position.x"
+          [style.top.px]="node.position.y"
+          (mousedown)="onNodeMouseDown($event, node)"
+          (click)="selectNode(node); $event.stopPropagation()"
+        >
+          <!-- Punto de conexión superior (entrada) -->
+          <button
+            type="button"
+            class="connection-point connection-input"
+            [class.active]="connectionState().isConnecting"
+            (click)="completeConnection(node.id); $event.stopPropagation()"
+            title="Conectar aquí"
+            aria-label="Punto de entrada para conexión"
+          ></button>
+
+          <div class="node-content">
+            <div class="node-header">
+              <span class="node-type-badge">{{ getNodeTypeLabel(node.type) }}</span>
+              @if (node.isOptional) {
+                <span class="optional-badge">Opcional</span>
+              }
+            </div>
+            <h4 class="node-title">{{ node.title }}</h4>
+            @if (node.description) {
+              <p class="node-description">{{ node.description }}</p>
+            }
+            <div class="node-meta">
+              <span class="node-hours">{{ node.estimatedHours }}h</span>
+              @if (node.resources.length > 0) {
+                <span class="node-resources-count">{{ node.resources.length }} recursos</span>
+              }
+            </div>
+          </div>
+
+          <!-- Punto de conexión inferior (salida) -->
+          <button
+            type="button"
+            class="connection-point connection-output"
+            (mousedown)="startConnection(node.id, $event)"
+            title="Arrastrar para conectar"
+            aria-label="Punto de salida para crear conexión"
+          ></button>
+        </article>
+      }
+
+      <!-- Placeholder cuando no hay nodos -->
+      @if (nodes().length === 0) {
+        <div class="empty-canvas">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <polygon points="12 2 2 7 12 12 22 7 12 2" />
+              <polyline points="2 17 12 22 22 17" />
+              <polyline points="2 12 12 17 22 12" />
+            </svg>
+          </div>
+          <h3>Empieza a crear tu roadmap</h3>
+          <p>Usa los botones de arriba para añadir nodos, luego arrástralos para posicionarlos y conectarlos.</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Panel de edición del nodo seleccionado -->
+  @if (selectedNode(); as node) {
+    <aside class="node-panel" role="region" aria-label="Editar nodo seleccionado">
+      <header class="panel-header">
+        <h3>Editar Nodo</h3>
+        <button
+          type="button"
+          class="panel-close"
+          (click)="deselectNode()"
+          aria-label="Cerrar panel"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </header>
+
+      <div class="panel-content">
+        <div class="panel-form-group">
+          <label for="node-title">Título</label>
+          <input
+            id="node-title"
+            type="text"
+            [ngModel]="node.title"
+            (ngModelChange)="updateNode(node.id, { title: $event })"
+            placeholder="Título del nodo"
+          />
+        </div>
+
+        <div class="panel-form-group">
+          <label for="node-description">Descripción</label>
+          <textarea
+            id="node-description"
+            [ngModel]="node.description"
+            (ngModelChange)="updateNode(node.id, { description: $event })"
+            placeholder="Describe este nodo..."
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="panel-form-row">
+          <div class="panel-form-group">
+            <label for="node-type">Tipo</label>
+            <select
+              id="node-type"
+              [ngModel]="node.type"
+              (ngModelChange)="updateNode(node.id, { type: $event })"
+            >
+              @for (type of nodeTypes; track type.type) {
+                <option [value]="type.type">{{ type.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="panel-form-group">
+            <label for="node-hours">Horas</label>
+            <input
+              id="node-hours"
+              type="number"
+              min="0"
+              step="0.5"
+              [ngModel]="node.estimatedHours"
+              (ngModelChange)="updateNode(node.id, { estimatedHours: $event })"
+            />
+          </div>
+        </div>
+
+        <div class="panel-form-group checkbox-inline">
+          <label>
+            <input
+              type="checkbox"
+              [ngModel]="node.isOptional"
+              (ngModelChange)="updateNode(node.id, { isOptional: $event })"
+            />
+            <span>Nodo opcional</span>
+          </label>
+        </div>
+
+        <!-- Recursos -->
+        <div class="panel-section">
+          <div class="section-header">
+            <h4>Recursos</h4>
+            <button
+              type="button"
+              class="btn-add-resource"
+              (click)="startAddResource(node.id)"
+              [disabled]="editingResource() !== null"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Añadir
+            </button>
+          </div>
+
+          <!-- Formulario añadir recurso -->
+          @if (editingResource()?.nodeId === node.id) {
+            <div class="resource-form">
+              <input
+                type="text"
+                placeholder="Título del recurso"
+                [ngModel]="editingResource()!.resource.title"
+                (ngModelChange)="updateEditingResourceTitle($event)"
+              />
+              <input
+                type="url"
+                placeholder="URL"
+                [ngModel]="editingResource()!.resource.url"
+                (ngModelChange)="updateEditingResourceUrl($event)"
+              />
+              <select
+                [ngModel]="editingResource()!.resource.type"
+                (ngModelChange)="updateEditingResourceType($event)"
+              >
+                @for (type of resourceTypes; track type.type) {
+                  <option [value]="type.type">{{ type.label }}</option>
+                }
+              </select>
+              <label class="resource-premium">
+                <input
+                  type="checkbox"
+                  [ngModel]="editingResource()!.resource.isPremium"
+                  (ngModelChange)="updateEditingResourcePremium($event)"
+                />
+                Premium
+              </label>
+              <div class="resource-form-actions">
+                <button type="button" class="btn-cancel-sm" (click)="cancelResourceEdit()">Cancelar</button>
+                <button type="button" class="btn-save-sm" (click)="saveResource()">Guardar</button>
+              </div>
+            </div>
+          }
+
+          <!-- Lista de recursos -->
+          @if (node.resources.length > 0) {
+            <ul class="resources-list">
+              @for (resource of node.resources; track resource.id) {
+                <li class="resource-item">
+                  <div class="resource-info">
+                    <span class="resource-type-badge">{{ getResourceTypeLabel(resource.type) }}</span>
+                    <a [href]="resource.url" target="_blank" rel="noopener">{{ resource.title }}</a>
+                    @if (resource.isPremium) {
+                      <span class="premium-star">★</span>
+                    }
+                  </div>
+                  <button
+                    type="button"
+                    class="resource-delete"
+                    (click)="deleteResource(node.id, resource.id)"
+                    title="Eliminar recurso"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </li>
+              }
+            </ul>
+          } @else if (!editingResource()) {
+            <p class="no-resources">Sin recursos. Añade enlaces a videos, artículos, etc.</p>
+          }
+        </div>
+
+        <!-- Acciones del nodo -->
+        <div class="panel-actions">
+          <button type="button" class="btn-duplicate" (click)="duplicateNode(node)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Duplicar
+          </button>
+          <button type="button" class="btn-delete-node" (click)="deleteNode(node.id)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </aside>
+  }
+
+  <!-- Ayuda / Instrucciones -->
+  <div class="editor-help" aria-hidden="true">
+    <span><kbd>Arrastrar</kbd> mover nodo</span>
+    <span><kbd>●→</kbd> conectar nodos</span>
+    <span><kbd>Del</kbd> eliminar</span>
+    <span><kbd>Ctrl+D</kbd> duplicar</span>
+  </div>
+</div>

@@ -28,16 +28,19 @@ export class MainLayoutComponent {
       .slice(0, 2);
   });
 
-  toggleDropdown(event: Event): void {
+  /** Alterna la visibilidad del dropdown de usuario. */
+  protected toggleDropdown(event: Event): void {
     event.stopPropagation();
     this.isDropdownOpen.update(open => !open);
   }
 
-  onDocumentClick(event: Event): void {
+  /** Cierra el dropdown al hacer clic fuera de él. */
+  protected onDocumentClick(event: Event): void {
     this.isDropdownOpen.set(false);
   }
 
-  onLogout(): void {
+  /** Cierra sesión y redirige al login. */
+  protected onLogout(): void {
     this.isDropdownOpen.set(false);
     this.authService.signOut();
   }

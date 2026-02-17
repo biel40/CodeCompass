@@ -88,7 +88,8 @@ export class StudentBundleFormComponent implements OnInit {
     }
   }
 
-  onTemplateChange(): void {
+  /** Rellena el formulario al seleccionar una plantilla de bono. */
+  protected onTemplateChange(): void {
     const templateId = this.bundleForm.controls.bundleId.value;
     if (!templateId) return;
 
@@ -102,7 +103,8 @@ export class StudentBundleFormComponent implements OnInit {
     }
   }
 
-  async onSubmit(): Promise<void> {
+  /** Procesa el envío del formulario de bono. */
+  protected async onSubmit(): Promise<void> {
     if (this.bundleForm.invalid || !this.studentId) return;
 
     this.isLoading.set(true);

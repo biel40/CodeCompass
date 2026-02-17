@@ -38,7 +38,8 @@ export class RegisterComponent {
     return null;
   }
 
-  async onSubmit(): Promise<void> {
+  /** Procesa el envío del formulario de registro. */
+  protected async onSubmit(): Promise<void> {
     if (this.registerForm.invalid) return;
 
     this.isLoading.set(true);
