@@ -13,7 +13,6 @@ import {
 /**
  * Servicio para gestionar bonos de clases.
  * Proporciona operaciones CRUD para bonos, bonos de estudiantes y sesiones de clase.
- *
  * @description Todas las operaciones están protegidas por Row Level Security (RLS)
  * en Supabase, garantizando que los usuarios solo accedan a datos autorizados.
  */
@@ -288,12 +287,12 @@ export class BundlesService {
 
   /**
    * Registra una nueva sesión de clase.
-   * Si está asociada a un bono, se incrementará automáticamente classes_used.
+   * Tras insertar, incrementa classes_used en el bono asociado si lo hay.
    */
   async createClassSession(
     sessionData: CreateClassSessionData
-  ): Promise<{ success: boolean; error?: string; data?: ClassSession }> {
-    const { data, error } = await this.supabase
+  ): Promise<{ success: boolean; error?: string }> {
+    const { error } = await this.supabase
       .from('class_sessions')
       .insert({
         student_id: sessionData.studentId,
@@ -302,23 +301,51 @@ export class BundlesService {
         duration_minutes: sessionData.durationMinutes ?? 60,
         topic: sessionData.topic,
         notes: sessionData.notes,
-      })
-      .select()
-      .single();
+      });
 
     if (error) {
       return { success: false, error: error.message };
     }
 
-    return { success: true, data: this.mapClassSession(data) };
+    // El trigger de Supabase incrementa classes_used automáticamente
+    return { success: true };
   }
 
   /**
-   * Elimina una sesión de clase.
-   * Si estaba asociada a un bono, se decrementará classes_used.
+   * Elimina una sesión de clase y decrementa classes_used del bono asociado.
    */
-  async deleteClassSession(id: string): Promise<{ success: boolean; error?: string }> {
+  async deleteClassSession(id: string, _studentBundleId?: string): Promise<{ success: boolean; error?: string }> {
     const { error } = await this.supabase.from('class_sessions').delete().eq('id', id);
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    // El trigger de Supabase decrementa classes_used automáticamente
+    return { success: true };
+  }
+
+  /**
+   * Incrementa o decrementa classes_used de un bono.
+   * Actualiza el estado a 'completed' si se alcanzó el total, o a 'active' si se redujo.
+   */
+  async incrementClassesUsed(bundleId: string, delta: number): Promise<{ success: boolean; error?: string }> {
+    const bundle = await this.getStudentBundleById(bundleId);
+    if (!bundle) return { success: false, error: 'Bono no encontrado' };
+
+    const newValue = Math.max(0, bundle.classesUsed + delta);
+    const updateData: Record<string, unknown> = {
+      classes_used: newValue,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (newValue >= bundle.totalClasses && bundle.status === 'active') {
+      updateData['status'] = 'completed';
+    } else if (newValue < bundle.totalClasses && bundle.status === 'completed') {
+      updateData['status'] = 'active';
+    }
+
+    const { error } = await this.supabase.from('student_bundles').update(updateData).eq('id', bundleId);
 
     if (error) {
       return { success: false, error: error.message };

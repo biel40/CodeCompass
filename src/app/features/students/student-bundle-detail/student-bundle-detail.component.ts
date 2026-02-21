@@ -22,6 +22,7 @@ export class StudentBundleDetailComponent implements OnInit {
   protected readonly sessions = signal<ClassSession[]>([]);
   protected readonly isLoading = signal(true);
   protected readonly isAddingSession = signal(false);
+  protected readonly errorMessage = signal<string | null>(null);
 
   protected readonly progressPercentage = computed(() => {
     const b = this.bundle();
@@ -95,38 +96,58 @@ export class StudentBundleDetailComponent implements OnInit {
 
   /** Añade una nueva sesión de clase al bono actual. */
   protected async onAddSession(): Promise<void> {
+    // Prevenir double-click: salir inmediatamente si ya hay operación en curso
+    if (this.isAddingSession()) return;
+
     const bundle = this.bundle();
     if (!bundle || !this.studentId) return;
 
     if (bundle.classesUsed >= bundle.totalClasses) {
-      alert('Este bono ya ha sido completado. No se pueden añadir más clases.');
+      this.errorMessage.set('Este bono ya ha sido completado. No se pueden añadir más clases.');
       return;
     }
 
     this.isAddingSession.set(true);
+    this.errorMessage.set(null);
 
-    const result = await this.bundlesService.createClassSession({
-      studentId: this.studentId,
-      studentBundleId: bundle.id,
-      sessionDate: new Date(),
-      durationMinutes: 60,
-    });
+    try {
+      const result = await this.bundlesService.createClassSession({
+        studentId: this.studentId,
+        studentBundleId: bundle.id,
+        sessionDate: new Date(),
+        durationMinutes: 60,
+      });
 
-    if (result.success) {
-      await this.loadData();
+      if (result.success) {
+        await this.loadData();
+      } else {
+        this.errorMessage.set(result.error ?? 'Error al registrar la clase');
+      }
+    } catch {
+      this.errorMessage.set('Error inesperado al registrar la clase');
+    } finally {
+      this.isAddingSession.set(false);
     }
-
-    this.isAddingSession.set(false);
   }
 
   /** Elimina una sesión de clase previa confirmación. */
-  protected async onDeleteSession(sessionId: string): Promise<void> {
-    if (!confirm('¿Eliminar esta sesión?')) return;
+  protected async onDeleteSession(session: ClassSession): Promise<void> {
+    if (!confirm('¿Eliminar esta sesión?')) {
+      return;
+    } 
 
-    const result = await this.bundlesService.deleteClassSession(sessionId);
+    this.errorMessage.set(null);
 
-    if (result.success) {
-      await this.loadData();
+    try {
+      const result = await this.bundlesService.deleteClassSession(session.id, session.studentBundleId);
+
+      if (result.success) {
+        await this.loadData();
+      } else {
+        this.errorMessage.set(result.error ?? 'Error al eliminar la sesión');
+      }
+    } catch {
+      this.errorMessage.set('Error inesperado al eliminar la sesión');
     }
   }
 
@@ -153,9 +174,9 @@ export class StudentBundleDetailComponent implements OnInit {
     if (!bundle) {
       return;
     }
-      
-    if (!confirm('¿Eliminar este bono?')) { 
-      return; 
+
+    if (!confirm('¿Eliminar este bono?')) {
+      return;
     }
 
     const result = await this.bundlesService.deleteStudentBundle(bundle.id);
