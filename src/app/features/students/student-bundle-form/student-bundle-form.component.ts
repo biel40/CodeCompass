@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Bundle, Student } from '../../../models';
+import { DatePickerComponent } from '../../../shared';
 import { BundlesService } from '../bundles.service';
 import { StudentsService } from '../students.service';
 
 @Component({
   selector: 'app-student-bundle-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, DatePickerComponent],
   templateUrl: './student-bundle-form.component.html',
   styleUrl: './student-bundle-form.component.css',
 })

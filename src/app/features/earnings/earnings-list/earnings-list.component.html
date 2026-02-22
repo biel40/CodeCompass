@@ -1,0 +1,167 @@
+<div class="earnings-page">
+  <header class="page-header anim-fade-in">
+    <div>
+      <h1>Ingresos</h1>
+      <p>Resumen financiero de todos los estudiantes</p>
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <div class="loading anim-fade-in">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <span>Cargando datos de ingresos...</span>
+    </div>
+  } @else {
+    <!-- Summary Cards -->
+    <section class="summary-section anim-fade-in" aria-label="Resumen de ingresos">
+      <div class="summary-grid">
+        <article class="summary-card summary-card--total">
+          <div class="summary-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <div class="summary-info">
+            <span class="summary-value">{{ summary().totalAmount | currency : 'EUR' : 'symbol' : '1.2-2' }}</span>
+            <span class="summary-label">Ingresos totales</span>
+          </div>
+        </article>
+
+        <article class="summary-card summary-card--paid">
+          <div class="summary-icon summary-icon--success" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <div class="summary-info">
+            <span class="summary-value summary-value--success">{{ summary().totalPaid | currency : 'EUR' : 'symbol' : '1.2-2' }}</span>
+            <span class="summary-label">Cobrado</span>
+          </div>
+        </article>
+
+        <article class="summary-card summary-card--pending">
+          <div class="summary-icon summary-icon--warning" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <div class="summary-info">
+            <span class="summary-value summary-value--warning">{{ summary().totalPending | currency : 'EUR' : 'symbol' : '1.2-2' }}</span>
+            <span class="summary-label">Pendiente</span>
+          </div>
+        </article>
+
+        <article class="summary-card">
+          <div class="summary-icon summary-icon--accent" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="summary-info">
+            <span class="summary-value">{{ summary().totalStudents }}</span>
+            <span class="summary-label">Estudiantes</span>
+          </div>
+        </article>
+
+        <article class="summary-card">
+          <div class="summary-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div class="summary-info">
+            <span class="summary-value">{{ summary().totalSessions }}</span>
+            <span class="summary-label">Clases impartidas</span>
+          </div>
+        </article>
+
+        <article class="summary-card">
+          <div class="summary-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+          </div>
+          <div class="summary-info">
+            <span class="summary-value">{{ summary().totalBundles }}</span>
+            <span class="summary-label">Bonos vendidos</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Earnings Table -->
+    @if (earnings().length === 0) {
+      <div class="empty-state anim-fade-in anim-delay-1">
+        <div class="empty-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <h3>Sin datos de ingresos</h3>
+        <p>Aún no hay bonos asignados a estudiantes</p>
+        <a routerLink="/students" class="btn-primary">Ver estudiantes</a>
+      </div>
+    } @else {
+      <section class="table-section anim-fade-in anim-delay-1" aria-label="Detalle por estudiante">
+        <h2>Detalle por estudiante</h2>
+        <div class="table-container">
+          <table class="earnings-table">
+            <thead>
+              <tr>
+                <th scope="col">Estudiante</th>
+                <th scope="col" class="text-right">Bonos</th>
+                <th scope="col" class="text-right">Clases</th>
+                <th scope="col" class="text-right">Cobrado</th>
+                <th scope="col" class="text-right">Pendiente</th>
+                <th scope="col" class="text-right">Total</th>
+                <th scope="col" class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of earnings(); track item.studentId) {
+                <tr>
+                  <td>
+                    <div class="student-cell">
+                      <div class="student-avatar">
+                        {{ getInitials(item.fullName) }}
+                      </div>
+                      <div class="student-info">
+                        <span class="student-name">{{ item.fullName }}</span>
+                        <span class="student-email">{{ item.email ?? 'Sin email' }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-right">{{ item.totalBundles }}</td>
+                  <td class="text-right">{{ item.totalSessions }}</td>
+                  <td class="text-right value--success">{{ item.totalPaid | currency : 'EUR' : 'symbol' : '1.2-2' }}</td>
+                  <td class="text-right value--warning">{{ item.totalPending | currency : 'EUR' : 'symbol' : '1.2-2' }}</td>
+                  <td class="text-right value--total">{{ item.totalAmount | currency : 'EUR' : 'symbol' : '1.2-2' }}</td>
+                  <td class="text-center">
+                    <a [routerLink]="['/students', item.studentId]" class="btn-action" title="Ver perfil">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  }
+</div>

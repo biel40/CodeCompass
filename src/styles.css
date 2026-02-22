@@ -108,3 +108,32 @@ button {
 ::view-transition-new(root) {
   animation-duration: 0.2s;
 }
+
+/* Global Date Input Styling (Dark Theme) */
+input[type="date"],
+input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+input[type="date"]::-webkit-datetime-edit,
+input[type="datetime-local"]::-webkit-datetime-edit {
+  color: var(--color-text);
+}
+
+/* Placeholder styling for empty date inputs */
+input[type="date"]:not(:valid)::-webkit-datetime-edit {
+  color: var(--color-text-muted);
+}

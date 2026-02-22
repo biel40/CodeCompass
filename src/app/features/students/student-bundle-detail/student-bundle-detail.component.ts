@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ClassSession, Student, StudentBundle } from '../../../models';
 import { BundlesService } from '../bundles.service';
@@ -7,7 +8,7 @@ import { StudentsService } from '../students.service';
 @Component({
   selector: 'app-student-bundle-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './student-bundle-detail.component.html',
   styleUrl: './student-bundle-detail.component.css',
 })
@@ -22,18 +23,27 @@ export class StudentBundleDetailComponent implements OnInit {
   protected readonly sessions = signal<ClassSession[]>([]);
   protected readonly isLoading = signal(true);
   protected readonly isAddingSession = signal(false);
+  protected readonly isEditingProgress = signal(false);
+  protected readonly isSavingProgress = signal(false);
+  protected readonly editedClassesUsed = signal(0);
+  protected readonly editingSessionId = signal<string | null>(null);
+  protected readonly editedSessionTopic = signal('');
+  protected readonly isSavingSession = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
   protected readonly progressPercentage = computed(() => {
-    const b = this.bundle();
-    if (!b) return 0;
-    return Math.round((b.classesUsed / b.totalClasses) * 100);
+    const currentBundle = this.bundle();
+    if (!currentBundle) {
+      return 0;
+    }
+
+    return Math.round((currentBundle.classesUsed / currentBundle.totalClasses) * 100);
   });
 
   protected readonly remainingClasses = computed(() => {
-    const b = this.bundle();
-    if (!b) return 0;
-    return b.totalClasses - b.classesUsed;
+    const currentBundle = this.bundle();
+    if (!currentBundle) return 0;
+    return currentBundle.totalClasses - currentBundle.classesUsed;
   });
 
   private studentId: string | null = null;
@@ -134,7 +144,7 @@ export class StudentBundleDetailComponent implements OnInit {
   protected async onDeleteSession(session: ClassSession): Promise<void> {
     if (!confirm('¿Eliminar esta sesión?')) {
       return;
-    } 
+    }
 
     this.errorMessage.set(null);
 
@@ -149,6 +159,107 @@ export class StudentBundleDetailComponent implements OnInit {
     } catch {
       this.errorMessage.set('Error inesperado al eliminar la sesión');
     }
+  }
+
+  /** Inicia la edición del tema de una sesión. */
+  protected onEditSessionTopic(session: ClassSession): void {
+    this.editingSessionId.set(session.id);
+    this.editedSessionTopic.set(session.topic ?? '');
+    this.errorMessage.set(null);
+  }
+
+  /** Cancela la edición del tema. */
+  protected onCancelSessionEdit(): void {
+    this.editingSessionId.set(null);
+    this.editedSessionTopic.set('');
+  }
+
+  /** Guarda el tema editado de una sesión. */
+  protected async onSaveSessionTopic(): Promise<void> {
+    const sessionId = this.editingSessionId();
+    if (!sessionId) return;
+
+    this.isSavingSession.set(true);
+    this.errorMessage.set(null);
+
+    try {
+      const result = await this.bundlesService.updateClassSession(sessionId, {
+        topic: this.editedSessionTopic().trim() || undefined,
+      });
+
+      if (result.success) {
+        this.editingSessionId.set(null);
+        this.editedSessionTopic.set('');
+        await this.loadData();
+      } else {
+        this.errorMessage.set(result.error ?? 'Error al actualizar el tema');
+      }
+    } catch {
+      this.errorMessage.set('Error inesperado al actualizar el tema');
+    } finally {
+      this.isSavingSession.set(false);
+    }
+  }
+
+  /** Verifica si una sesión está en modo edición. */
+  protected isEditingSession(sessionId: string): boolean {
+    return this.editingSessionId() === sessionId;
+  }
+
+  /** Activa el modo de edición de progreso. */
+  protected onEditProgress(): void {
+    const bundle = this.bundle();
+    if (!bundle) return;
+
+    this.editedClassesUsed.set(bundle.classesUsed);
+    this.isEditingProgress.set(true);
+    this.errorMessage.set(null);
+  }
+
+  /** Cancela la edición de progreso. */
+  protected onCancelEditProgress(): void {
+    this.isEditingProgress.set(false);
+    this.errorMessage.set(null);
+  }
+
+  /** Guarda el nuevo valor de progreso. */
+  protected async onSaveProgress(): Promise<void> {
+    const bundle = this.bundle();
+    if (!bundle) return;
+
+    const newValue = this.editedClassesUsed();
+    if (newValue === bundle.classesUsed) {
+      this.isEditingProgress.set(false);
+      return;
+    }
+
+    this.isSavingProgress.set(true);
+    this.errorMessage.set(null);
+
+    try {
+      const result = await this.bundlesService.setClassesUsed(bundle.id, newValue);
+
+      if (result.success) {
+        this.isEditingProgress.set(false);
+        await this.loadData();
+      } else {
+        this.errorMessage.set(result.error ?? 'Error al actualizar el progreso');
+      }
+    } catch {
+      this.errorMessage.set('Error inesperado al actualizar el progreso');
+    } finally {
+      this.isSavingProgress.set(false);
+    }
+  }
+
+  /** Actualiza el valor editado de clases usadas. */
+  protected onEditedClassesChange(value: number): void {
+    const bundle = this.bundle();
+    if (!bundle) return;
+
+    // Asegurar que el valor esté dentro del rango válido
+    const clampedValue = Math.max(0, Math.min(value, bundle.totalClasses));
+    this.editedClassesUsed.set(clampedValue);
   }
 
   /**

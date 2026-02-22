@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, publicGuard } from './core';
+import { adminGuard, authGuard, publicGuard } from './core';
 
 export const routes: Routes = [
   {
@@ -29,6 +29,11 @@ export const routes: Routes = [
       {
         path: 'roadmaps',
         loadChildren: () => import('./features/roadmaps/roadmaps.routes').then((m) => m.ROADMAPS_ROUTES),
+      },
+      {
+        path: 'earnings',
+        canActivate: [adminGuard],
+        loadChildren: () => import('./features/earnings/earnings.routes').then((m) => m.EARNINGS_ROUTES),
       },
     ],
   },

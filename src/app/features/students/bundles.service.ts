@@ -326,6 +326,27 @@ export class BundlesService {
   }
 
   /**
+   * Actualiza una sesión de clase existente (tema y/o notas).
+   */
+  async updateClassSession(
+    id: string,
+    data: { topic?: string; notes?: string }
+  ): Promise<{ success: boolean; error?: string }> {
+    const updateData: Record<string, unknown> = {};
+
+    if (data.topic !== undefined) updateData['topic'] = data.topic || null;
+    if (data.notes !== undefined) updateData['notes'] = data.notes || null;
+
+    const { error } = await this.supabase.from('class_sessions').update(updateData).eq('id', id);
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  }
+
+  /**
    * Incrementa o decrementa classes_used de un bono.
    * Actualiza el estado a 'completed' si se alcanzó el total, o a 'active' si se redujo.
    */
@@ -339,6 +360,36 @@ export class BundlesService {
       updated_at: new Date().toISOString(),
     };
 
+    if (newValue >= bundle.totalClasses && bundle.status === 'active') {
+      updateData['status'] = 'completed';
+    } else if (newValue < bundle.totalClasses && bundle.status === 'completed') {
+      updateData['status'] = 'active';
+    }
+
+    const { error } = await this.supabase.from('student_bundles').update(updateData).eq('id', bundleId);
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  }
+
+  /**
+   * Establece directamente el número de clases usadas de un bono.
+   * Actualiza el estado automáticamente según el nuevo valor.
+   */
+  async setClassesUsed(bundleId: string, classesUsed: number): Promise<{ success: boolean; error?: string }> {
+    const bundle = await this.getStudentBundleById(bundleId);
+    if (!bundle) return { success: false, error: 'Bono no encontrado' };
+
+    const newValue = Math.max(0, Math.min(classesUsed, bundle.totalClasses));
+    const updateData: Record<string, unknown> = {
+      classes_used: newValue,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Actualizar estado según el nuevo valor
     if (newValue >= bundle.totalClasses && bundle.status === 'active') {
       updateData['status'] = 'completed';
     } else if (newValue < bundle.totalClasses && bundle.status === 'completed') {

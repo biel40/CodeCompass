@@ -79,14 +79,22 @@
 
     @if (bundleForm.controls.isPaid.value) {
       <div class="form-group">
-        <label for="paymentDate">Fecha de pago</label>
-        <input type="date" id="paymentDate" formControlName="paymentDate" />
+        <app-date-picker
+          formControlName="paymentDate"
+          label="Fecha de pago"
+          inputId="paymentDate"
+          placeholder="Seleccionar fecha de pago"
+        />
       </div>
     }
 
     <div class="form-group">
-      <label for="expiresAt">Fecha de expiración (opcional)</label>
-      <input type="date" id="expiresAt" formControlName="expiresAt" />
+      <app-date-picker
+        formControlName="expiresAt"
+        label="Fecha de expiración (opcional)"
+        inputId="expiresAt"
+        placeholder="Seleccionar fecha"
+      />
     </div>
 
     <div class="form-group">
