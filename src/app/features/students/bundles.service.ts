@@ -410,49 +410,102 @@ export class BundlesService {
   // ============================================
 
   /**
-   * Obtiene el resumen de ingresos de un estudiante.
+   * Obtiene el resumen de ingresos de un estudiante calculando desde student_bundles.
    */
   async getStudentEarnings(studentId: string): Promise<StudentEarnings | null> {
-    const { data, error } = await this.supabase.from('student_earnings').select('*').eq('student_id', studentId).single();
+    // Obtener datos del estudiante
+    const { data: studentData, error: studentError } = await this.supabase
+      .from('students')
+      .select('id, full_name, email')
+      .eq('id', studentId)
+      .single();
 
-    if (error) {
-      this.logError('Error al obtener ingresos del estudiante:', error);
+    if (studentError || !studentData) {
+      this.logError('Error al obtener estudiante:', studentError);
       return null;
     }
 
+    // Obtener bonos del estudiante
+    const { data: bundlesData, error: bundlesError } = await this.supabase
+      .from('student_bundles')
+      .select('total_price, is_paid, classes_used')
+      .eq('student_id', studentId);
+
+    if (bundlesError) {
+      this.logError('Error al obtener bonos del estudiante:', bundlesError);
+      return null;
+    }
+
+    const bundles = bundlesData ?? [];
+
     return {
-      studentId: data.student_id,
-      fullName: data.full_name,
-      email: data.email,
-      totalBundles: data.total_bundles,
-      totalPaid: Number(data.total_paid),
-      totalPending: Number(data.total_pending),
-      totalAmount: Number(data.total_amount),
-      totalSessions: data.total_sessions,
+      studentId: studentData.id,
+      fullName: studentData.full_name,
+      email: studentData.email,
+      totalBundles: bundles.length,
+      totalPaid: bundles.filter((bundle) => bundle.is_paid).reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+      totalPending: bundles.filter((bundle) => !bundle.is_paid).reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+      totalAmount: bundles.reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+      totalSessions: bundles.reduce((sum, bundle) => sum + (bundle.classes_used ?? 0), 0),
     };
   }
 
   /**
-   * Obtiene el resumen de todos los ingresos.
+   * Obtiene el resumen de todos los ingresos calculando desde students y student_bundles.
    */
   async getAllStudentEarnings(): Promise<StudentEarnings[]> {
-    const { data, error } = await this.supabase.from('student_earnings').select('*');
+    // Obtener todos los estudiantes
+    const { data: studentsData, error: studentsError } = await this.supabase
+      .from('students')
+      .select('id, full_name, email')
+      .order('full_name', { ascending: true });
 
-    if (error) {
-      this.logError('Error al obtener ingresos:', error);
+    if (studentsError) {
+      this.logError('Error al obtener estudiantes:', studentsError);
       return [];
     }
 
-    return (data ?? []).map((e) => ({
-      studentId: e.student_id,
-      fullName: e.full_name,
-      email: e.email,
-      totalBundles: e.total_bundles,
-      totalPaid: Number(e.total_paid),
-      totalPending: Number(e.total_pending),
-      totalAmount: Number(e.total_amount),
-      totalSessions: e.total_sessions,
-    }));
+    // Obtener todos los bonos de estudiantes
+    const { data: bundlesData, error: bundlesError } = await this.supabase
+      .from('student_bundles')
+      .select('student_id, total_price, is_paid, classes_used');
+
+    if (bundlesError) {
+      this.logError('Error al obtener bonos:', bundlesError);
+      return [];
+    }
+
+    const bundles = bundlesData ?? [];
+    const students = studentsData ?? [];
+
+    // Agrupar bonos por estudiante
+    const bundlesByStudent = new Map<string, typeof bundles>();
+    for (const bundle of bundles) {
+      const studentBundles = bundlesByStudent.get(bundle.student_id) ?? [];
+      studentBundles.push(bundle);
+      bundlesByStudent.set(bundle.student_id, studentBundles);
+    }
+
+    // Calcular earnings para cada estudiante que tenga bonos
+    return students
+      .filter((student) => bundlesByStudent.has(student.id))
+      .map((student) => {
+        const studentBundles = bundlesByStudent.get(student.id) ?? [];
+        return {
+          studentId: student.id,
+          fullName: student.full_name,
+          email: student.email,
+          totalBundles: studentBundles.length,
+          totalPaid: studentBundles
+            .filter((bundle) => bundle.is_paid)
+            .reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+          totalPending: studentBundles
+            .filter((bundle) => !bundle.is_paid)
+            .reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+          totalAmount: studentBundles.reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+          totalSessions: studentBundles.reduce((sum, bundle) => sum + (bundle.classes_used ?? 0), 0),
+        };
+      });
   }
 
   // ============================================
