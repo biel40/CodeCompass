@@ -66,6 +66,13 @@ export class AuthService {
   }
 
   private async handleAuthChange(event: AuthChangeEvent, session: Session | null): Promise<void> {
+    if (event === 'PASSWORD_RECOVERY') {
+      // El usuario llegó desde el enlace de recuperación de contraseña.
+      // Tiene sesión temporal válida pero solo debe poder cambiar su contraseña.
+      this.router.navigate(['/auth/reset-password']);
+      return;
+    }
+
     if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
       await this.loadUserProfile(session.user);
     } else if (event === 'SIGNED_OUT') {
