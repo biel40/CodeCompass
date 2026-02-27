@@ -26,6 +26,7 @@
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  overflow-x: hidden;
 }
 
 .loading {
@@ -501,10 +502,27 @@ dd {
 
   h1 {
     font-size: 1.4rem;
+    word-break: break-word;
+  }
+
+  .roadmap-description {
+    word-break: break-word;
+  }
+
+  .info-card {
+    padding: 1rem;
+  }
+
+  .roadmap-canvas {
+    overflow: hidden;
   }
 }
 
 @media (max-width: 480px) {
+  .view-page {
+    padding: 0.75rem;
+  }
+
   .btn-edit,
   .btn-delete {
     flex: 1;
@@ -515,6 +533,22 @@ dd {
 
   .badges {
     flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .category-badge,
+  .difficulty-badge,
+  .visibility-badge {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+  }
+
+  .roadmap-description {
+    font-size: 0.875rem;
   }
 
   .stat-item {
@@ -526,7 +560,133 @@ dd {
     height: 36px;
   }
 
+  .stat-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
   .stat-value {
     font-size: 1.1rem;
+  }
+
+  .stat-value.stat-date {
+    font-size: 0.8rem;
+  }
+
+  .info-card h3 {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .tag {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .canvas-placeholder {
+    padding: 2rem 1rem;
+  }
+
+  .placeholder-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .placeholder-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .canvas-placeholder p {
+    font-size: 0.875rem;
+  }
+}
+
+/* ===== Pantallas muy pequeñas (320px) ===== */
+@media (max-width: 360px) {
+  .view-page {
+    padding: 0.5rem;
+  }
+
+  .header-top {
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .back-link {
+    font-size: 0.8rem;
+  }
+
+  .back-link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  h1 {
+    font-size: 1.1rem;
+  }
+
+  .roadmap-description {
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+
+  .stat-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .stat-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .stat-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .info-card {
+    padding: 0.75rem;
+  }
+
+  .info-card h3 {
+    font-size: 0.75rem;
+  }
+
+  .not-found {
+    padding: 2rem 1rem;
+  }
+
+  .not-found-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .not-found-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .not-found h2 {
+    font-size: 1.1rem;
+  }
+
+  .btn-primary {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
   }
 }

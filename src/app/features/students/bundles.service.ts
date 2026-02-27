@@ -13,7 +13,6 @@ import {
 /**
  * Servicio para gestionar bonos de clases.
  * Proporciona operaciones CRUD para bonos, bonos de estudiantes y sesiones de clase.
- *
  * @description Todas las operaciones están protegidas por Row Level Security (RLS)
  * en Supabase, garantizando que los usuarios solo accedan a datos autorizados.
  */
@@ -288,12 +287,12 @@ export class BundlesService {
 
   /**
    * Registra una nueva sesión de clase.
-   * Si está asociada a un bono, se incrementará automáticamente classes_used.
+   * Tras insertar, incrementa classes_used en el bono asociado si lo hay.
    */
   async createClassSession(
     sessionData: CreateClassSessionData
-  ): Promise<{ success: boolean; error?: string; data?: ClassSession }> {
-    const { data, error } = await this.supabase
+  ): Promise<{ success: boolean; error?: string }> {
+    const { error } = await this.supabase
       .from('class_sessions')
       .insert({
         student_id: sessionData.studentId,
@@ -302,23 +301,102 @@ export class BundlesService {
         duration_minutes: sessionData.durationMinutes ?? 60,
         topic: sessionData.topic,
         notes: sessionData.notes,
-      })
-      .select()
-      .single();
+      });
 
     if (error) {
       return { success: false, error: error.message };
     }
 
-    return { success: true, data: this.mapClassSession(data) };
+    // El trigger de Supabase incrementa classes_used automáticamente
+    return { success: true };
   }
 
   /**
-   * Elimina una sesión de clase.
-   * Si estaba asociada a un bono, se decrementará classes_used.
+   * Elimina una sesión de clase y decrementa classes_used del bono asociado.
    */
-  async deleteClassSession(id: string): Promise<{ success: boolean; error?: string }> {
+  async deleteClassSession(id: string, _studentBundleId?: string): Promise<{ success: boolean; error?: string }> {
     const { error } = await this.supabase.from('class_sessions').delete().eq('id', id);
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    // El trigger de Supabase decrementa classes_used automáticamente
+    return { success: true };
+  }
+
+  /**
+   * Actualiza una sesión de clase existente (tema y/o notas).
+   */
+  async updateClassSession(
+    id: string,
+    data: { topic?: string; notes?: string }
+  ): Promise<{ success: boolean; error?: string }> {
+    const updateData: Record<string, unknown> = {};
+
+    if (data.topic !== undefined) updateData['topic'] = data.topic || null;
+    if (data.notes !== undefined) updateData['notes'] = data.notes || null;
+
+    const { error } = await this.supabase.from('class_sessions').update(updateData).eq('id', id);
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  }
+
+  /**
+   * Incrementa o decrementa classes_used de un bono.
+   * Actualiza el estado a 'completed' si se alcanzó el total, o a 'active' si se redujo.
+   */
+  async incrementClassesUsed(bundleId: string, delta: number): Promise<{ success: boolean; error?: string }> {
+    const bundle = await this.getStudentBundleById(bundleId);
+    if (!bundle) return { success: false, error: 'Bono no encontrado' };
+
+    const newValue = Math.max(0, bundle.classesUsed + delta);
+    const updateData: Record<string, unknown> = {
+      classes_used: newValue,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (newValue >= bundle.totalClasses && bundle.status === 'active') {
+      updateData['status'] = 'completed';
+    } else if (newValue < bundle.totalClasses && bundle.status === 'completed') {
+      updateData['status'] = 'active';
+    }
+
+    const { error } = await this.supabase.from('student_bundles').update(updateData).eq('id', bundleId);
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  }
+
+  /**
+   * Establece directamente el número de clases usadas de un bono.
+   * Actualiza el estado automáticamente según el nuevo valor.
+   */
+  async setClassesUsed(bundleId: string, classesUsed: number): Promise<{ success: boolean; error?: string }> {
+    const bundle = await this.getStudentBundleById(bundleId);
+    if (!bundle) return { success: false, error: 'Bono no encontrado' };
+
+    const newValue = Math.max(0, Math.min(classesUsed, bundle.totalClasses));
+    const updateData: Record<string, unknown> = {
+      classes_used: newValue,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Actualizar estado según el nuevo valor
+    if (newValue >= bundle.totalClasses && bundle.status === 'active') {
+      updateData['status'] = 'completed';
+    } else if (newValue < bundle.totalClasses && bundle.status === 'completed') {
+      updateData['status'] = 'active';
+    }
+
+    const { error } = await this.supabase.from('student_bundles').update(updateData).eq('id', bundleId);
 
     if (error) {
       return { success: false, error: error.message };
@@ -332,49 +410,102 @@ export class BundlesService {
   // ============================================
 
   /**
-   * Obtiene el resumen de ingresos de un estudiante.
+   * Obtiene el resumen de ingresos de un estudiante calculando desde student_bundles.
    */
   async getStudentEarnings(studentId: string): Promise<StudentEarnings | null> {
-    const { data, error } = await this.supabase.from('student_earnings').select('*').eq('student_id', studentId).single();
+    // Obtener datos del estudiante
+    const { data: studentData, error: studentError } = await this.supabase
+      .from('students')
+      .select('id, full_name, email')
+      .eq('id', studentId)
+      .single();
 
-    if (error) {
-      this.logError('Error al obtener ingresos del estudiante:', error);
+    if (studentError || !studentData) {
+      this.logError('Error al obtener estudiante:', studentError);
       return null;
     }
 
+    // Obtener bonos del estudiante
+    const { data: bundlesData, error: bundlesError } = await this.supabase
+      .from('student_bundles')
+      .select('total_price, is_paid, classes_used')
+      .eq('student_id', studentId);
+
+    if (bundlesError) {
+      this.logError('Error al obtener bonos del estudiante:', bundlesError);
+      return null;
+    }
+
+    const bundles = bundlesData ?? [];
+
     return {
-      studentId: data.student_id,
-      fullName: data.full_name,
-      email: data.email,
-      totalBundles: data.total_bundles,
-      totalPaid: Number(data.total_paid),
-      totalPending: Number(data.total_pending),
-      totalAmount: Number(data.total_amount),
-      totalSessions: data.total_sessions,
+      studentId: studentData.id,
+      fullName: studentData.full_name,
+      email: studentData.email,
+      totalBundles: bundles.length,
+      totalPaid: bundles.filter((bundle) => bundle.is_paid).reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+      totalPending: bundles.filter((bundle) => !bundle.is_paid).reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+      totalAmount: bundles.reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+      totalSessions: bundles.reduce((sum, bundle) => sum + (bundle.classes_used ?? 0), 0),
     };
   }
 
   /**
-   * Obtiene el resumen de todos los ingresos.
+   * Obtiene el resumen de todos los ingresos calculando desde students y student_bundles.
    */
   async getAllStudentEarnings(): Promise<StudentEarnings[]> {
-    const { data, error } = await this.supabase.from('student_earnings').select('*');
+    // Obtener todos los estudiantes
+    const { data: studentsData, error: studentsError } = await this.supabase
+      .from('students')
+      .select('id, full_name, email')
+      .order('full_name', { ascending: true });
 
-    if (error) {
-      this.logError('Error al obtener ingresos:', error);
+    if (studentsError) {
+      this.logError('Error al obtener estudiantes:', studentsError);
       return [];
     }
 
-    return (data ?? []).map((e) => ({
-      studentId: e.student_id,
-      fullName: e.full_name,
-      email: e.email,
-      totalBundles: e.total_bundles,
-      totalPaid: Number(e.total_paid),
-      totalPending: Number(e.total_pending),
-      totalAmount: Number(e.total_amount),
-      totalSessions: e.total_sessions,
-    }));
+    // Obtener todos los bonos de estudiantes
+    const { data: bundlesData, error: bundlesError } = await this.supabase
+      .from('student_bundles')
+      .select('student_id, total_price, is_paid, classes_used');
+
+    if (bundlesError) {
+      this.logError('Error al obtener bonos:', bundlesError);
+      return [];
+    }
+
+    const bundles = bundlesData ?? [];
+    const students = studentsData ?? [];
+
+    // Agrupar bonos por estudiante
+    const bundlesByStudent = new Map<string, typeof bundles>();
+    for (const bundle of bundles) {
+      const studentBundles = bundlesByStudent.get(bundle.student_id) ?? [];
+      studentBundles.push(bundle);
+      bundlesByStudent.set(bundle.student_id, studentBundles);
+    }
+
+    // Calcular earnings para cada estudiante que tenga bonos
+    return students
+      .filter((student) => bundlesByStudent.has(student.id))
+      .map((student) => {
+        const studentBundles = bundlesByStudent.get(student.id) ?? [];
+        return {
+          studentId: student.id,
+          fullName: student.full_name,
+          email: student.email,
+          totalBundles: studentBundles.length,
+          totalPaid: studentBundles
+            .filter((bundle) => bundle.is_paid)
+            .reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+          totalPending: studentBundles
+            .filter((bundle) => !bundle.is_paid)
+            .reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+          totalAmount: studentBundles.reduce((sum, bundle) => sum + Number(bundle.total_price), 0),
+          totalSessions: studentBundles.reduce((sum, bundle) => sum + (bundle.classes_used ?? 0), 0),
+        };
+      });
   }
 
   // ============================================

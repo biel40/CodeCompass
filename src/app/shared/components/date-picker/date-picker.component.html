@@ -1,0 +1,113 @@
+<div class="date-picker-container" [class.disabled]="isDisabled()">
+  @if (label()) {
+    <label [for]="inputId()" class="date-picker-label">
+      {{ label() }}
+      @if (required()) {
+        <span class="required-marker">*</span>
+      }
+    </label>
+  }
+
+  <div class="input-wrapper" (click)="toggleCalendar()">
+    <div class="input-content">
+      @if (displayValue()) {
+        <span class="selected-date">{{ displayValue() }}</span>
+      } @else {
+        <span class="placeholder">{{ placeholder() }}</span>
+      }
+    </div>
+
+    <div class="input-actions">
+      @if (selectedDate() && !isDisabled()) {
+        <button
+          type="button"
+          class="btn-clear"
+          (click)="clearDate(); $event.stopPropagation()"
+          title="Borrar fecha"
+          aria-label="Borrar fecha"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      }
+      <div class="calendar-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  @if (isOpen()) {
+    <div class="calendar-dropdown" role="dialog" aria-label="Selector de fecha">
+      <!-- Header: navegación de meses -->
+      <div class="calendar-header">
+        <button
+          type="button"
+          class="btn-nav"
+          (click)="previousMonth()"
+          aria-label="Mes anterior"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+
+        <span class="month-label">{{ currentMonthLabel() }}</span>
+
+        <button
+          type="button"
+          class="btn-nav"
+          (click)="nextMonth()"
+          aria-label="Mes siguiente"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Días de la semana -->
+      <div class="weekdays">
+        @for (day of weekDays; track day) {
+          <span class="weekday">{{ day }}</span>
+        }
+      </div>
+
+      <!-- Grid de días -->
+      <div class="days-grid" role="grid">
+        @for (day of calendarDays(); track day.date.getTime()) {
+          <button
+            type="button"
+            class="day-cell"
+            [class.other-month]="!day.isCurrentMonth"
+            [class.today]="day.isToday"
+            [class.selected]="day.isSelected"
+            [class.disabled]="day.isDisabled"
+            [disabled]="day.isDisabled"
+            (click)="selectDay(day)"
+            [attr.aria-label]="day.date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })"
+            [attr.aria-selected]="day.isSelected"
+          >
+            {{ day.day }}
+          </button>
+        }
+      </div>
+
+      <!-- Footer: acciones rápidas -->
+      <div class="calendar-footer">
+        <button type="button" class="btn-action btn-clear-date" (click)="clearDate()">
+          Borrar
+        </button>
+        <button type="button" class="btn-action btn-today" (click)="selectToday()">
+          Hoy
+        </button>
+      </div>
+    </div>
+  }
+</div>

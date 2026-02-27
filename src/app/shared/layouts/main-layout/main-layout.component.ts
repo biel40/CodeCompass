@@ -2,6 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../../core';
 
+/** Email del administrador autorizado */
+const ADMIN_EMAIL = 'biel40aws@gmail.com';
+
 @Component({
   selector: 'app-main-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +30,9 @@ export class MainLayoutComponent {
       .toUpperCase()
       .slice(0, 2);
   });
+
+  /** Indica si el usuario actual es administrador. */
+  protected readonly isAdmin = computed(() => this.authService.user()?.email === ADMIN_EMAIL);
 
   /** Alterna la visibilidad del dropdown de usuario. */
   protected toggleDropdown(event: Event): void {
