@@ -27,6 +27,16 @@ export class StudentsListComponent implements OnInit {
     this.isLoading.set(false);
   }
 
+  /** Traduce el nivel del estudiante al español. */
+  protected traducirNivel(level: string): string {
+    const traducciones: Record<string, string> = {
+      beginner: 'Principiante',
+      intermediate: 'Intermedio',
+      advanced: 'Avanzado',
+    };
+    return traducciones[level] ?? level;
+  }
+
   /** Extrae las iniciales del nombre del estudiante (máx. 2 caracteres). */
   protected getInitials(name: string): string {
     return name

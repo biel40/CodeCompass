@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, ElementRef, inject, Injector, OnInit, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ClassSession, Student, StudentBundle } from '../../../models';
@@ -17,6 +17,7 @@ export class StudentBundleDetailComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly bundlesService = inject(BundlesService);
   private readonly studentsService = inject(StudentsService);
+  private readonly injector = inject(Injector);
 
   protected readonly bundle = signal<StudentBundle | null>(null);
   protected readonly student = signal<Student | null>(null);
@@ -30,6 +31,14 @@ export class StudentBundleDetailComponent implements OnInit {
   protected readonly editedSessionTopic = signal('');
   protected readonly isSavingSession = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+
+  /** Si el formulario inline de tema está visible antes de crear la sesión. */
+  protected readonly isShowingSessionForm = signal(false);
+  /** Tema a incluir en la nueva sesión. */
+  protected readonly newSessionTopic = signal('');
+
+  /** Referencia al input de tema para enfocar programáticamente. */
+  private readonly newSessionTopicInput = viewChild<ElementRef<HTMLInputElement>>('newSessionTopicInput');
 
   protected readonly progressPercentage = computed(() => {
     const currentBundle = this.bundle();
@@ -104,7 +113,33 @@ export class StudentBundleDetailComponent implements OnInit {
     return labels[status] ?? status;
   }
 
-  /** Añade una nueva sesión de clase al bono actual. */
+  /** Abre el formulario inline para introducir el tema antes de crear una sesión. */
+  protected onOpenSessionForm(): void {
+    const bundle = this.bundle();
+    if (!bundle) return;
+
+    if (bundle.classesUsed >= bundle.totalClasses) {
+      this.errorMessage.set('Este bono ya ha sido completado. No se pueden añadir más clases.');
+      return;
+    }
+
+    this.newSessionTopic.set('');
+    this.isShowingSessionForm.set(true);
+    this.errorMessage.set(null);
+
+    // Enfocar el input después de que Angular lo renderice
+    afterNextRender(() => {
+      this.newSessionTopicInput()?.nativeElement.focus();
+    }, { injector: this.injector });
+  }
+
+  /** Cierra el formulario inline sin crear la sesión. */
+  protected onCancelSessionForm(): void {
+    this.isShowingSessionForm.set(false);
+    this.newSessionTopic.set('');
+  }
+
+  /** Añade una nueva sesión de clase al bono actual, incluyendo el tema opcional. */
   protected async onAddSession(): Promise<void> {
     // Prevenir double-click: salir inmediatamente si ya hay operación en curso
     if (this.isAddingSession()) return;
@@ -120,15 +155,20 @@ export class StudentBundleDetailComponent implements OnInit {
     this.isAddingSession.set(true);
     this.errorMessage.set(null);
 
+    const tema = this.newSessionTopic().trim();
+
     try {
       const result = await this.bundlesService.createClassSession({
         studentId: this.studentId,
         studentBundleId: bundle.id,
         sessionDate: new Date(),
         durationMinutes: 60,
+        topic: tema || undefined,
       });
 
       if (result.success) {
+        this.isShowingSessionForm.set(false);
+        this.newSessionTopic.set('');
         await this.loadData();
       } else {
         this.errorMessage.set(result.error ?? 'Error al registrar la clase');
@@ -184,7 +224,7 @@ export class StudentBundleDetailComponent implements OnInit {
 
     try {
       const result = await this.bundlesService.updateClassSession(sessionId, {
-        topic: this.editedSessionTopic().trim() || undefined,
+        topic: this.editedSessionTopic().trim(),
       });
 
       if (result.success) {

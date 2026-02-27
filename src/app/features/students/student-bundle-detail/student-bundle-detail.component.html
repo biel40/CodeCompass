@@ -172,41 +172,119 @@
             }
           </p>
           @if (remainingClasses() > 0) {
-            <button (click)="onAddSession()" class="btn-add-session" [disabled]="isAddingSession()" type="button">
-              @if (isAddingSession()) {
-                <span class="loading-spinner small" aria-hidden="true"></span>
-                Añadiendo...
-              } @else {
+            @if (isShowingSessionForm()) {
+              <div class="session-form">
+                <label for="new-session-topic" class="session-form-label">¿De qué fue la clase? <span class="optional">(opcional)</span></label>
+                <input
+                  #newSessionTopicInput
+                  id="new-session-topic"
+                  type="text"
+                  class="session-topic-input"
+                  placeholder="Ej: Funciones de flecha, CSS Flexbox..."
+                  [ngModel]="newSessionTopic()"
+                  (ngModelChange)="newSessionTopic.set($event)"
+                  (keyup.enter)="onAddSession()"
+                  (keyup.escape)="onCancelSessionForm()"
+                  [disabled]="isAddingSession()"
+                  aria-label="Tema de la clase"
+                />
+                <div class="session-form-actions">
+                  <button
+                    (click)="onCancelSessionForm()"
+                    class="btn-cancel-edit"
+                    type="button"
+                    [disabled]="isAddingSession()"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    (click)="onAddSession()"
+                    class="btn-add-session"
+                    type="button"
+                    [disabled]="isAddingSession()"
+                  >
+                    @if (isAddingSession()) {
+                      <span class="loading-spinner small" aria-hidden="true"></span>
+                      Guardando...
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      Confirmar
+                    }
+                  </button>
+                </div>
+              </div>
+            } @else {
+              <button (click)="onOpenSessionForm()" class="btn-add-session" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                   <line x1="12" y1="5" x2="12" y2="19" />
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
                 Registrar clase de hoy
-              }
-            </button>
+              </button>
+            }
           }
         }
       </section>
 
       <!-- Info Card -->
-      <section class="info-card">
+      <section class="info-card info-card--enhanced">
         <h3>Información</h3>
-        <dl>
-          <dt>Precio total</dt>
-          <dd class="price">{{ bundle()!.totalPrice }}€</dd>
-          <dt>Precio por clase</dt>
-          <dd>{{ bundle()!.pricePerClass.toFixed(2) }}€</dd>
-          <dt>Fecha de inicio</dt>
-          <dd>{{ formatDate(bundle()!.startsAt) }}</dd>
+
+        <div class="info-hero">
+          <span class="info-hero-label">Precio total</span>
+          <span class="info-hero-value">{{ bundle()!.totalPrice }}€</span>
+          <span class="info-hero-sub">{{ bundle()!.pricePerClass.toFixed(2) }}€ / clase</span>
+        </div>
+
+        <div class="info-fields">
+          <div class="info-field">
+            <div class="info-field-icon info-field-icon--primary" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            </div>
+            <div class="info-field-content">
+              <span class="info-field-label">Fecha de inicio</span>
+              <span class="info-field-value">{{ formatDate(bundle()!.startsAt) }}</span>
+            </div>
+          </div>
+
           @if (bundle()!.expiresAt) {
-            <dt>Fecha de expiración</dt>
-            <dd>{{ formatDate(bundle()!.expiresAt!) }}</dd>
+            <div class="info-field">
+              <div class="info-field-icon info-field-icon--warning" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <div class="info-field-content">
+                <span class="info-field-label">Fecha de expiración</span>
+                <span class="info-field-value">{{ formatDate(bundle()!.expiresAt!) }}</span>
+              </div>
+            </div>
           }
+
           @if (bundle()!.paymentDate) {
-            <dt>Fecha de pago</dt>
-            <dd>{{ formatDate(bundle()!.paymentDate!) }}</dd>
+            <div class="info-field">
+              <div class="info-field-icon info-field-icon--success" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              </div>
+              <div class="info-field-content">
+                <span class="info-field-label">Fecha de pago</span>
+                <span class="info-field-value">{{ formatDate(bundle()!.paymentDate!) }}</span>
+              </div>
+            </div>
           }
-        </dl>
+        </div>
+
         @if (!bundle()!.isPaid) {
           <button (click)="onMarkAsPaid()" class="btn-mark-paid" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -228,7 +306,7 @@
       <!-- Sessions List -->
       <section class="sessions-card">
         <div class="section-header">
-          <h3>Historial de Clases</h3>
+          <h3>Historial de clases</h3>
           <span class="session-count">{{ sessions().length }} sesiones</span>
         </div>
         @if (sessions().length === 0) {

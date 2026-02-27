@@ -48,7 +48,7 @@
               <h3>{{ student.fullName }}</h3>
               <p>{{ student.email ?? 'Sin email' }}</p>
             </div>
-            <span class="badge" [class]="student.level">{{ student.level }}</span>
+            <span class="badge" [class]="student.level">{{ traducirNivel(student.level) }}</span>
           </div>
           <a [routerLink]="['/students', student.id]" class="btn-view">
             <span>Ver Perfil</span>
